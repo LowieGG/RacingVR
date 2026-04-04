@@ -1,0 +1,86 @@
+===================================================
+  COCKPIT / FIRST-PERSON DASHBOARD SETUP
+  Instructies voor Unity Editor
+===================================================
+
+Wat je krijgt:
+  ✓ First-person cockpit camera (kijkt door de voorruit)
+  ✓ Stuurwiel dat meedraait met je input
+  ✓ Snelheidsmeter (km/h) met kleurverandering
+  ✓ RPM / toerental balk
+  ✓ Gas (groen) / Rem (rood) / Drift (oranje) indicatorlichtjes
+  ✓ Voorruit pilaren links & rechts (zwart frame)
+
+---------------------------------------------------
+STAP 1 — Cinemachine camera uitzetten
+---------------------------------------------------
+1. Open je scene (SampleScene of vergelijkbaar)
+2. Zoek in de Hierarchy het object "cm" of "CinemachineVirtualCamera"
+3. Klik erop -> in de Inspector, zet het vinkje UIT (GameObject deactiveren)
+   OF verwijder het component 'Cinemachine Virtual Camera'
+
+---------------------------------------------------
+STAP 2 — CockpitCamera toevoegen aan de Main Camera
+---------------------------------------------------
+1. Zoek in de Hierarchy: "Main Camera"
+2. Klik op "Main Camera" -> Inspector -> "Add Component"
+3. Zoek: "CockpitCamera" en klik erop
+4. Je ziet nu een veld "Kart Target":
+   - Sleep het kart-object (de speler-kart, bijv. "Kart_Player")
+     van de Hierarchy naar dit veld
+5. Instellingen die je kunt aanpassen:
+   - Cockpit Offset: standaard (0, 0.45, 0.25)
+     → verhoog Y als de camera te laag zit
+     → verhoog Z als de camera te ver achter zit
+   - Position Smoothing: lager = stijver, hoger = soepeler
+   - Rotation Smoothing: hoe soepel de camera meedraait
+   - Shake Amount: hoeveel trillen bij rijden (0 = geen)
+
+---------------------------------------------------
+STAP 3 — DashboardHUD Canvas aanmaken
+---------------------------------------------------
+1. In de Hierarchy: rechtermuisknop -> UI -> Canvas
+2. Rename het naar "DashboardCanvas"
+3. Selecteer "DashboardCanvas" -> Inspector -> "Add Component"
+4. Zoek: "DashboardHUD" en klik erop
+5. Je ziet een veld "Kart":
+   - Sleep de speler-kart (met het ArcadeKart component)
+     naar dit veld
+6. Instellingen:
+   - Max Steer Angle: hoe ver het stuur draait (270° = realistisch)
+   - Steer Speed: hoe snel het stuur reageert (8 = soepel)
+
+---------------------------------------------------
+STAP 4 — Testen
+---------------------------------------------------
+1. Druk op Play
+2. Je ziet nu:
+   - De wereld vanuit de cockpit (through the windshield)
+   - Onderin: dashboard met stuurwiel, snelheid, lampjes
+3. Rijden:
+   - Pijltoetsen of WASD voor gas/rem/sturen
+   - Het stuurwiel draait mee!
+
+---------------------------------------------------
+TIPS & AANPASSINGEN
+---------------------------------------------------
+▶ Camera zit in de grond?
+  → Verhoog "Cockpit Offset Y" (bijv. naar 0.6 of 0.8)
+
+▶ Camera kijkt verkeerde kant op?
+  → Controleer of de kart de juiste forward-richting heeft
+  → Pas "Cockpit Offset Z" aan (positief = vooruit)
+
+▶ Stuurwiel draait te weinig?
+  → Verhoog "Max Steer Angle" naar 360 of 450
+
+▶ Dashboard te groot of te klein?
+  → Pas in de Canvas Scaler de "Reference Resolution" aan
+  → Of verander de Scale van de UI elementen in de Inspector
+
+▶ Wil je een stuurwiel afbeelding gebruiken?
+  → Maak een Sprite van je stuurwiel plaatje
+  → In de Hierarchy zoek "SteeringWheel" -> voeg Image toe
+     en wijs de Sprite toe
+
+===================================================
