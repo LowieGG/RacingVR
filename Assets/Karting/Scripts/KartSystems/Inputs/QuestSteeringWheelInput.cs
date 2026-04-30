@@ -34,7 +34,13 @@ namespace KartGame.KartSystems
         public QuestControllerButton BrakeButton = QuestControllerButton.Grip;
         [Tooltip("B/Y by default: hold wheel straight and press to recalibrate.")]
         public QuestControllerButton RecalibrateButton = QuestControllerButton.SecondaryButton;
+        [Tooltip("Thumbstick click by default: honk.")]
+        public QuestControllerButton HornButton = QuestControllerButton.Primary2DAxisClick;
         [Range(0f, 1f)] public float ButtonThreshold = 0.2f;
+
+        [Header("Horn")]
+        public AudioSource HornAudioSource;
+        public AudioClip HornClip;
 
         [Header("Virtual Wheel Visual")]
         [Tooltip("Optional visual steering wheel mesh in the cockpit. It rotates from its starting local rotation.")]
@@ -50,6 +56,7 @@ namespace KartGame.KartSystems
         Vector3 m_ControllerToVirtualWheelOffset;
         bool m_HasCalibration;
         bool m_RecalibrateWasPressed;
+        bool m_HornWasPressed;
         float m_LastSteeringAngle;
 
         void Start()
@@ -81,6 +88,7 @@ namespace KartGame.KartSystems
                 Calibrate(rotation);
             }
             m_RecalibrateWasPressed = recalibratePressed;
+            UpdateHorn();
 
             float steering = 0f;
             if (m_HasCalibration)
@@ -140,6 +148,34 @@ namespace KartGame.KartSystems
         bool ReadButton(QuestControllerButton button)
         {
             return QuestControllerButtonUtility.IsPressed(m_Controller, button, ButtonThreshold);
+        }
+
+        void UpdateHorn()
+        {
+            bool hornPressed = ReadButton(HornButton);
+            if (hornPressed && !m_HornWasPressed)
+            {
+                PlayHorn();
+            }
+
+            m_HornWasPressed = hornPressed;
+        }
+
+        void PlayHorn()
+        {
+            if (HornAudioSource == null)
+            {
+                return;
+            }
+
+            if (HornClip != null)
+            {
+                HornAudioSource.PlayOneShot(HornClip);
+            }
+            else
+            {
+                HornAudioSource.Play();
+            }
         }
 
         float GetSignedAngleAroundAxis(Quaternion controllerRotation)

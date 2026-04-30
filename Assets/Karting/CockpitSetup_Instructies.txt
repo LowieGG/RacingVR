@@ -16,6 +16,9 @@ Setup op de speler-kart:
    - Grip = rem / achteruit
    - A = springen via KartJump
    - B = stuur opnieuw rechtdoor kalibreren
+   - Rechter thumbstick indrukken = toeter, als Horn Audio Source is ingevuld
+6. Laat Use Legacy Input Axes op KeyboardInput UIT staan voor VR. Anders kan
+   de linker joystick via Unity's oude Horizontal axis alsnog sturen.
 
 Kalibreren bij start:
 1. Zet de controller vast in het fysieke 3D-geprinte stuur.
