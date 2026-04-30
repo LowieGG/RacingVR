@@ -1,4 +1,46 @@
 ===================================================
+QUEST 2 FYSIEK STUUR / CONTROLLER TRACKING
+===================================================
+Doel:
+  Gebruik een Quest controller als tracking puck in een 3D-geprint stuur.
+  De controller/handen hoeven niet zichtbaar te zijn; alleen je virtuele stuur
+  en de kart reageren op de controller.
+
+Setup op de speler-kart:
+1. Selecteer de speler-kart met het ArcadeKart component.
+2. Laat KeyboardInput staan.
+3. Add Component -> QuestSteeringWheelInput.
+4. Controller Node: RightHand als je de rechter controller in het stuur klikt.
+5. Buttons standaard:
+   - Trigger = vooruit / gas
+   - Grip = rem / achteruit
+   - A = springen via KartJump
+   - B = stuur opnieuw rechtdoor kalibreren
+
+Kalibreren bij start:
+1. Zet de controller vast in het fysieke 3D-geprinte stuur.
+2. Hou het fysieke stuur precies rechtdoor, alsof de voorwielen recht staan.
+3. Start de game. De eerste tracking-rotatie wordt automatisch nul graden.
+4. Als het stuur scheef staat: hou het stuur opnieuw recht en druk B.
+
+Als links/rechts omgekeerd is:
+  Zet Invert Steering aan op QuestSteeringWheelInput.
+
+Als de stuurhoek niet klopt:
+  Probeer Steering Axis LocalZ, LocalX of LocalY. De juiste as is de lokale as
+  van de controller die door de as van het fysieke stuur wijst.
+
+Virtueel stuurmodel laten meedraaien:
+  Sleep je stuur-mesh naar Virtual Wheel op QuestSteeringWheelInput.
+  Als het visueel omgekeerd draait, zet Invert Virtual Wheel aan.
+  Wil je dat het virtuele stuur over je fysieke stuur ligt, zet dan
+  Follow Controller Position aan en kalibreer terwijl het stuur recht staat.
+
+Controller/handen verbergen:
+  Zet de mesh/model GameObjects van de XR controller prefabs uit. De controller
+  blijft dan wel tracken, maar wordt niet meer getekend in de scene.
+
+===================================================
   COCKPIT / FIRST-PERSON DASHBOARD SETUP
   Instructies voor Unity Editor
 ===================================================

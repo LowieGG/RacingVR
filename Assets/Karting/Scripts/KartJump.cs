@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR;
 
 namespace KartGame.KartSystems
 {
@@ -10,8 +11,13 @@ namespace KartGame.KartSystems
         public float JumpForce = 1500f;
         public float GroundCheckDistance = 1.3f;
         public KeyCode JumpKey = KeyCode.Space;
+        public XRNode JumpControllerNode = XRNode.RightHand;
+        public QuestControllerButton JumpButton = QuestControllerButton.PrimaryButton;
+        [Range(0f, 1f)] public float ButtonThreshold = 0.2f;
 
         ArcadeKart kart;
+        InputDevice jumpController;
+        bool jumpWasPressed;
 
         void Start()
         {
@@ -20,10 +26,23 @@ namespace KartGame.KartSystems
 
         void Update()
         {
-            if (Input.GetKeyDown(JumpKey) && IsGrounded())
+            if ((Input.GetKeyDown(JumpKey) || GetQuestJumpDown()) && IsGrounded())
             {
                 kart.Rigidbody.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
             }
+        }
+
+        bool GetQuestJumpDown()
+        {
+            if (!jumpController.isValid)
+            {
+                jumpController = InputDevices.GetDeviceAtXRNode(JumpControllerNode);
+            }
+
+            bool jumpPressed = QuestControllerButtonUtility.IsPressed(jumpController, JumpButton, ButtonThreshold);
+            bool jumpDown = jumpPressed && !jumpWasPressed;
+            jumpWasPressed = jumpPressed;
+            return jumpDown;
         }
 
         bool IsGrounded()
