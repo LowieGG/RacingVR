@@ -5,39 +5,36 @@ public class WiperController : MonoBehaviour
     public float sweepAngle = 90f;
     public float speed = 2f;
 
-    public bool isActive = false;
-
-    float timer;
+    float controlValue = 0f;
+    float timer = 0f;
     Quaternion startRot;
 
     void Start()
     {
         startRot = transform.localRotation;
-
-        // Zorg dat hij echt stil staat bij start
         timer = 0f;
-        isActive = false;
+    }
+
+    void LateUpdate()
+    {
+        var r = GetComponentInChildren<MeshRenderer>();
+        if (r != null) r.enabled = true;
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            isActive = !isActive;
+        if (Input.GetKey(KeyCode.V))
+            controlValue += Time.deltaTime * 1.5f;
 
-            // optioneel: reset timing bij uitschakelen
-            if (!isActive)
-            {
-                timer = 0f;
-                transform.localRotation = startRot;
-            }
-        }
+        if (Input.GetKey(KeyCode.C))
+            controlValue -= Time.deltaTime * 1.5f;
 
-        if (!isActive) return;
+        controlValue = Mathf.Clamp(controlValue, 0f, 1f); // enkel positief, snelheid 0..1
 
-        timer += Time.deltaTime * speed;
+        timer += Time.deltaTime * speed * controlValue * 5f;
 
-        float angle = Mathf.Sin(timer) * sweepAngle;
+        float t = Mathf.PingPong(timer, 1f);
+        float angle = -t * sweepAngle;
 
         transform.localRotation = startRot * Quaternion.Euler(0f, 0f, angle);
     }
