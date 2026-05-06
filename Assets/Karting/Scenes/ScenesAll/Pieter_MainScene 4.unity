@@ -19376,8 +19376,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bfd04cd0fe20df4fb3e4cae51cd6591, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  opstartToets: 111
-  revSound: {fileID: 0}
 --- !u!114 &1910917310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19390,8 +19388,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bfd04cd0fe20df4fb3e4cae51cd6591, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  opstartToets: 111
-  revSound: {fileID: 0}
 --- !u!114 &1910917311
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19404,8 +19400,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bfd04cd0fe20df4fb3e4cae51cd6591, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  opstartToets: 111
-  revSound: {fileID: 0}
 --- !u!1001 &1931383003
 PrefabInstance:
   m_ObjectHideFlags: 0

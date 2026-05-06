@@ -10284,7 +10284,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sweepAngle: 80
   speed: 2
-  isActive: 0
 --- !u!1 &925475506
 GameObject:
   m_ObjectHideFlags: 0
