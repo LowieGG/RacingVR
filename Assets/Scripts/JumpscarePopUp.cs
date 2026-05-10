@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 
 public class JumpscarePopUp : MonoBehaviour
@@ -6,20 +6,23 @@ public class JumpscarePopUp : MonoBehaviour
     [Header("Instellingen")]
     public GameObject smsCanvas;
     public TextMeshProUGUI smsTekst;
-    public KeyCode sluitToets = KeyCode.X;
     public float minTijd = 5f;
     public float maxTijd = 15f;
 
+    [Header("ESP32")]
+    public int switchPin = 12; // Pas aan naar jouw pin
+
     private bool popupActief = false;
+    private bool vorigeSchakelaarStatus = false;
 
     private string[] berichten = {
-        "H� waar ben je schatje??",
+        "Hé waar ben je?? 😂",
         "BEL ME ASAP!!!",
         "Ben je al bijna thuis?",
         "Heb je mijn bericht gezien??",
-        "ANTWOORD NU!!!! ",
+        "ANTWOORD NU!!!! 😡",
         "Je moeder belde, bel terug!",
-        "Ben je nog wakker? X"
+        "Feestje vanavond, kom je? 🎉"
     };
 
     void Start()
@@ -30,7 +33,24 @@ public class JumpscarePopUp : MonoBehaviour
 
     void Update()
     {
-        if (popupActief && Input.GetKeyDown(sluitToets))
+        // Lees schakelaar via ESP32Manager
+        ESP32Manager esp32 = FindObjectOfType<ESP32Manager>();
+        if (esp32 == null) return;
+
+        bool huidigeStatus = esp32.schakelaarIngedrukt;
+
+        // Detecteer rising edge (van uit naar aan)
+        bool risingEdge = huidigeStatus && !vorigeSchakelaarStatus;
+
+        if (risingEdge && popupActief)
+        {
+            VerbergPopup();
+        }
+
+        vorigeSchakelaarStatus = huidigeStatus;
+
+        // Keyboard backup voor testen
+        if (Input.GetKeyDown(KeyCode.X) && popupActief)
         {
             VerbergPopup();
         }

@@ -4,22 +4,30 @@ using KartGame.KartSystems;
 public class NitroController : MonoBehaviour
 {
     [Header("Nitro Instellingen")]
-    public KeyCode nitroToets = KeyCode.N;
     public float nitroTopSpeedBoost = 30f;
     public float nitroAccelerationBoost = 5f;
     public float nitroDuur = 3f;
 
     private ArcadeKart kart;
+    private ESP32Manager esp32;
     private bool nitroActief = false;
 
     void Start()
     {
         kart = GetComponent<ArcadeKart>();
+        esp32 = FindObjectOfType<ESP32Manager>();
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(nitroToets) && !nitroActief)
+        // ESP32 input
+        if (esp32 != null && esp32.nitroIngedrukt && !nitroActief)
+        {
+            StartNitro();
+        }
+
+        // Tijdelijk keyboard backup voor testen
+        if (Input.GetKeyDown(KeyCode.N) && !nitroActief)
         {
             StartNitro();
         }
@@ -43,7 +51,6 @@ public class NitroController : MonoBehaviour
 
         kart.AddPowerup(powerup);
         Debug.Log("NITRO ACTIEF!");
-
         Invoke(nameof(StopNitro), nitroDuur);
     }
 
