@@ -11,7 +11,6 @@ public class CollisionVibration : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        // Vibreer bij botsing
         if (esp32 != null)
         {
             esp32.StuurVibratie();

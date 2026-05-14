@@ -20,13 +20,11 @@ public class NitroController : MonoBehaviour
 
     void Update()
     {
-        // ESP32 input
         if (esp32 != null && esp32.nitroIngedrukt && !nitroActief)
         {
             StartNitro();
         }
 
-        // Tijdelijk keyboard backup voor testen
         if (Input.GetKeyDown(KeyCode.N) && !nitroActief)
         {
             StartNitro();

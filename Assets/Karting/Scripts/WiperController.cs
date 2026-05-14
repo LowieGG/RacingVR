@@ -3,16 +3,16 @@ using UnityEngine;
 public class WiperController : MonoBehaviour
 {
     public float sweepAngle = 90f;
-    public float speed = 2f;
+    public float speed = 0.1f; // Trager
 
-    float controlValue = 0f;
-    float timer = 0f;
-    Quaternion startRot;
+    private float timer = 0f;
+    private Quaternion startRot;
+    private ESP32Manager esp32;
 
     void Start()
     {
         startRot = transform.localRotation;
-        timer = 0f;
+        esp32 = FindObjectOfType<ESP32Manager>();
     }
 
     void LateUpdate()
@@ -23,19 +23,33 @@ public class WiperController : MonoBehaviour
 
     void Update()
     {
+        // Lees schakelaar direct (geen toggle, gewoon aan/uit)
+        bool wiperAan = false;
+
+        if (esp32 != null)
+            wiperAan = esp32.wiperSchakelaar;
+
+        // Keyboard backup
         if (Input.GetKey(KeyCode.V))
-            controlValue += Time.deltaTime * 1.5f;
+            wiperAan = true;
 
-        if (Input.GetKey(KeyCode.C))
-            controlValue -= Time.deltaTime * 1.5f;
-
-        controlValue = Mathf.Clamp(controlValue, 0f, 1f); // enkel positief, snelheid 0..1
-
-        timer += Time.deltaTime * speed * controlValue * 5f;
-
-        float t = Mathf.PingPong(timer, 1f);
-        float angle = -t * sweepAngle;
-
-        transform.localRotation = startRot * Quaternion.Euler(0f, 0f, angle);
+        if (wiperAan)
+        {
+            timer += Time.deltaTime * speed ;
+            float t = Mathf.PingPong(timer, 1f);
+            float angle = -t * sweepAngle;
+            transform.localRotation = startRot * Quaternion.Euler(0f, 0f, angle);
+        }
+        else
+        {
+            // Rustig terugkeren naar startpositie
+            transform.localRotation = Quaternion.Lerp(
+                transform.localRotation,
+                startRot,
+                Time.deltaTime * 2f
+            );
+            // Reset timer zodat hij altijd vanaf begin start
+            timer = 0f;
+        }
     }
 }
