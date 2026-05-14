@@ -102,7 +102,7 @@ public class F1CockpitRig : MonoBehaviour
     public bool autoBuildSteeringWheel = true;
 
     [Tooltip("Local wheel position on DashboardBody.")]
-    public Vector3 steeringWheelLocalPosition = new Vector3(0f, -0.22f, 0.55f);
+    public Vector3 steeringWheelLocalPosition = new Vector3(0f, -0.22f, 0.4f);
 
     [Tooltip("Local wheel tilt on DashboardBody.")]
     public Vector3 steeringWheelLocalEulerAngles = new Vector3(68f, 0f, 0f);

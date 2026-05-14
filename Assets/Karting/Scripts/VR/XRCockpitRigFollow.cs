@@ -35,6 +35,13 @@ public class XRCockpitRigFollow : MonoBehaviour
     [Tooltip("Optional button to make the current controller/headset distance the neutral sitting position. Leave None so B only recalibrates steering rotation.")]
     public QuestControllerButton resetSeatBaselineButton = QuestControllerButton.None;
 
+    [Header("Seat Neutral Baseline")]
+    [Tooltip("Use a fixed neutral headset-to-wheel position instead of capturing the first tracked pose at startup.")]
+    public bool useConfiguredSeatBaseline = true;
+
+    [Tooltip("Neutral wheel centre position relative to the headset in kart local axes.")]
+    public Vector3 configuredWheelCenterFromHeadLocal = Vector3.zero;
+
     [Range(0f, 1f)]
     public float buttonThreshold = 0.2f;
 
@@ -54,7 +61,7 @@ public class XRCockpitRigFollow : MonoBehaviour
     [Header("Controller Mount Offset")]
     [Tooltip("Meters the controller is mounted to the right of the steering wheel rotation point. Positive means the real wheel center is left of the controller.")]
     [Range(-0.5f, 0.5f)]
-    public float controllerRightOfRotationPoint = 0f;
+    public float controllerRightOfRotationPoint = 0.17f;
 
     [Tooltip("Meters the controller is mounted above the steering wheel rotation point. Positive means the real wheel center is below the controller.")]
     [Range(-0.5f, 0.5f)]
@@ -160,7 +167,7 @@ public class XRCockpitRigFollow : MonoBehaviour
 
         if (!hasReachBaseline)
         {
-            SetSeatBaseline(currentControllerLocal);
+            SetSeatBaseline(useConfiguredSeatBaseline ? configuredWheelCenterFromHeadLocal : currentControllerLocal);
         }
 
         bool resetPressed = QuestControllerButtonUtility.IsPressed(reachController, resetSeatBaselineButton, buttonThreshold);
