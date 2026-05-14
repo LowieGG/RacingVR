@@ -10,6 +10,10 @@ namespace KartGame.KartSystems
     {
         public float JumpForce = 1500f;
         public float GroundCheckDistance = 1.3f;
+        public float GroundCheckRadius = 0.35f;
+        public float GroundCheckStartOffset = 0.25f;
+        public float JumpBufferTime = 0.2f;
+        public float CoyoteTime = 0.12f;
         public KeyCode JumpKey = KeyCode.Space;
         public XRNode JumpControllerNode = XRNode.RightHand;
         public QuestControllerButton JumpButton = QuestControllerButton.PrimaryButton;
@@ -18,6 +22,8 @@ namespace KartGame.KartSystems
         ArcadeKart kart;
         InputDevice jumpController;
         bool jumpWasPressed;
+        float lastJumpRequestTime = -999f;
+        float lastGroundedTime = -999f;
 
         void Start()
         {
@@ -26,8 +32,23 @@ namespace KartGame.KartSystems
 
         void Update()
         {
-            if ((Input.GetKeyDown(JumpKey) || GetQuestJumpDown()) && IsGrounded())
+            if (Input.GetKeyDown(JumpKey) || GetQuestJumpDown())
             {
+                lastJumpRequestTime = Time.time;
+            }
+        }
+
+        void FixedUpdate()
+        {
+            if (IsGrounded())
+                lastGroundedTime = Time.time;
+
+            bool jumpBuffered = Time.time - lastJumpRequestTime <= JumpBufferTime;
+            bool recentlyGrounded = Time.time - lastGroundedTime <= CoyoteTime;
+            if (jumpBuffered && recentlyGrounded)
+            {
+                lastJumpRequestTime = -999f;
+                lastGroundedTime = -999f;
                 kart.Rigidbody.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
             }
         }
@@ -47,8 +68,33 @@ namespace KartGame.KartSystems
 
         bool IsGrounded()
         {
-            // Raycast recht naar beneden, geen layer nodig
-            return Physics.Raycast(transform.position, Vector3.down, GroundCheckDistance);
+            // Ignore triggers and the kart's own colliders; cockpit visuals/buttons should not count as ground.
+            Vector3 origin = transform.position + Vector3.up * GroundCheckStartOffset;
+            RaycastHit[] hits = Physics.SphereCastAll(
+                origin,
+                GroundCheckRadius,
+                Vector3.down,
+                GroundCheckDistance + GroundCheckStartOffset,
+                ~0,
+                QueryTriggerInteraction.Ignore
+            );
+
+            for (int i = 0; i < hits.Length; i++)
+            {
+                Collider hitCollider = hits[i].collider;
+                if (hitCollider == null)
+                    continue;
+
+                if (hitCollider.attachedRigidbody == kart.Rigidbody)
+                    continue;
+
+                if (hitCollider.transform.IsChildOf(transform))
+                    continue;
+
+                return true;
+            }
+
+            return false;
         }
     }
 }

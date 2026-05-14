@@ -326,6 +326,7 @@ namespace KartGame.KartSystems
             // reset input
             Input = new InputData();
             WantsToDrift = false;
+            m_Inputs = GetComponents<IInput>();
 
             // gather nonzero input from our sources
             for (int i = 0; i < m_Inputs.Length; i++)

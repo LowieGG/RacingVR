@@ -136,6 +136,7 @@ GameObject:
   - component: {fileID: 4895846115232909981}
   - component: {fileID: 4895846115232909958}
   - component: {fileID: 4895846115232909976}
+  - component: {fileID: 4895846115232909957}
   m_Layer: 2
   m_Name: BaseKartClassic
   m_TagString: Untagged
@@ -285,9 +286,58 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f292ffb948323c49ac31e54ff737ea2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  UseLegacyInputAxes: 0
   TurnInputName: Horizontal
   AccelerateButtonName: Accelerate
   BrakeButtonName: Brake
+  AccelerateKey: 273
+  AccelerateAltKey: 119
+  BrakeKey: 274
+  BrakeAltKey: 115
+  TurnLeftKey: 276
+  TurnLeftAltKey: 97
+  TurnRightKey: 275
+  TurnRightAltKey: 100
+--- !u!114 &4895846115232909957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4895846115232909980}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e7cfd8bbde84c4e964e7eec62b21f4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ControllerNode: 5
+  SteeringAxis: 2
+  MaxWheelAngle: 180
+  SteeringSensitivity: 2
+  SteeringDeadZone: 0.04
+  InvertSteering: 1
+  CalibrateOnStart: 1
+  AccelerateButton: 0
+  BrakeButton: 1
+  RecalibrateButton: 3
+  HornButton: 4
+  ButtonThreshold: 0.2
+  HornAudioSource: {fileID: 0}
+  HornClip: {fileID: 0}
+  VirtualWheel: {fileID: 0}
+  VirtualWheelAxis: 2
+  InvertVirtualWheel: 0
+  FollowControllerPosition: 0
+  MatchControllerRotation: 0
+  HideVirtualWheelWithoutController: 1
+  VirtualWheelLocalPosition: {x: 0, y: 0.45, z: 0.75}
+  VirtualWheelLocalEulerAngles: {x: 0, y: 0, z: 0}
+  VirtualWheelPositionOffset: {x: 0, y: 0, z: 0}
+  VirtualWheelRotationOffset: {x: 0, y: 0, z: 0}
+  AutoCreateVirtualWheel: 1
+  AutoWheelRadius: 0.18
+  AutoWheelLineWidth: 0.018
+  AutoWheelColor: {r: 0.9, g: 0.9, b: 0.9, a: 1}
 --- !u!1 &4895846115356922113
 GameObject:
   m_ObjectHideFlags: 0

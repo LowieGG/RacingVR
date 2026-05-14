@@ -7,7 +7,7 @@ namespace KartGame.UI
 {
     /// <summary>
     /// DashboardHUD v2 - F1-stijl cockpit dashboard met echt rond stuurwiel en halo frame.
-    /// Voeg dit script toe aan een Canvas (Screen Space - Overlay) in de scene.
+    /// Voeg dit script toe aan een Canvas. In XR wordt Screen Space - Camera gebruikt.
     /// Wijs de speler-kart toe aan 'Kart'.
     /// </summary>
     public class DashboardHUD : MonoBehaviour
@@ -29,6 +29,16 @@ namespace KartGame.UI
         [Tooltip("Toon een gebogen voorruit frame.")]
         public bool ShowWindshield = true;
         public Color WindshieldColor = new Color(0.06f, 0.06f, 0.06f, 0.95f);
+
+        [Header("VR / World Space")]
+        [Tooltip("Laat deze canvas in World Space staan zodat hij aan de cockpit vast blijft zitten.")]
+        public bool WorldSpaceMode = false;
+
+        [Tooltip("Verberg het 2D UI-stuur in VR. Gebruik daar het echte cockpit-stuur voor.")]
+        public bool HideSteeringWheelInVR = true;
+
+        [Tooltip("Verberg het 2D voorruit-frame in VR. Gebruik daar de echte cockpit-geometry voor.")]
+        public bool HideWindshieldInVR = true;
 
         // Private UI refs
         private RectTransform m_SteeringWheel;
@@ -55,8 +65,24 @@ namespace KartGame.UI
         static readonly Color C_RedDim    = new Color(0.22f, 0.04f, 0.04f, 1f);
         static readonly Color C_OrangeDim = new Color(0.22f, 0.12f, 0.0f,  1f);
 
-        void Start()  => BuildDashboard();
-        void Update() { if (Kart != null) { UpdateWheel(); UpdateDisplay(); UpdateLights(); } }
+        void Start()
+        {
+            // Auto-detect: als de canvas al op World Space staat (ingesteld in de Inspector),
+            // schakel WorldSpaceMode in zodat BuildDashboard het niet overschrijft.
+            var existingCanvas = GetComponent<Canvas>();
+            if (existingCanvas != null && existingCanvas.renderMode == RenderMode.WorldSpace)
+                WorldSpaceMode = true;
+
+            BuildDashboard();
+        }
+
+        void Update()
+        {
+            if (Kart == null) return;
+            if (!WorldSpaceMode || !HideSteeringWheelInVR) UpdateWheel();
+            UpdateDisplay();
+            UpdateLights();
+        }
 
         // ══════════════════════════════════════════════════════════════════════════
         //  BUILD
@@ -64,28 +90,51 @@ namespace KartGame.UI
 
         void BuildDashboard()
         {
-            // Canvas setup
             var canvas = GetComponent<Canvas>() ?? gameObject.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.sortingOrder = 10;
 
-            var scaler = GetComponent<CanvasScaler>() ?? gameObject.AddComponent<CanvasScaler>();
-            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1920, 1080);
-            scaler.matchWidthOrHeight = 0.5f;
+            if (WorldSpaceMode)
+            {
+                canvas.renderMode = RenderMode.WorldSpace;
+                canvas.worldCamera = null;
+                // World Space: blijft vastzittend in de 3D wereld aan de cockpit.
+                // Render mode NIET aanpassen — de gebruiker heeft het al goed ingesteld.
+                // CanvasScaler verwijderen (niet compatibel met WorldSpace + eigen schaal).
+                var oldScaler = GetComponent<CanvasScaler>();
+                if (oldScaler != null) Destroy(oldScaler);
+            }
+            else
+            {
+                Camera uiCamera = Camera.main;
+                if (uiCamera != null)
+                {
+                    canvas.renderMode    = RenderMode.ScreenSpaceCamera;
+                    canvas.worldCamera   = uiCamera;
+                    canvas.planeDistance = 1.25f;
+                }
+                else
+                {
+                    canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                }
+                canvas.sortingOrder = 10;
 
+                var scaler = GetComponent<CanvasScaler>() ?? gameObject.AddComponent<CanvasScaler>();
+                scaler.uiScaleMode          = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                scaler.referenceResolution  = new Vector2(1920, 1080);
+                scaler.matchWidthOrHeight   = 0.5f;
+            }
             if (!GetComponent<GraphicRaycaster>())
                 gameObject.AddComponent<GraphicRaycaster>();
 
             // ── Gebogen voorruit frame ────────────────────────────────────────
-            if (ShowWindshield) BuildWindshield();
+            if (ShowWindshield && (!WorldSpaceMode || !HideWindshieldInVR)) BuildWindshield();
 
             // ── Dashboard bodem balk ──────────────────────────────────────────
             var dashBar = MakeRect("DashBar", transform, C_Dark,
                 new Vector2(0,0), new Vector2(1,0), new Vector2(0,0), new Vector2(0,260));
 
             // ── Stuurwiel (midden, net boven bodem) ───────────────────────────
-            BuildSteeringWheel();
+            if (!WorldSpaceMode || !HideSteeringWheelInVR)
+                BuildSteeringWheel();
 
             // ── Snelheids + versnelling display (in stuur scherm) ─────────────
             BuildCenterDisplay();
@@ -230,11 +279,11 @@ namespace KartGame.UI
             float screenW = 130f, screenH = 90f;
 
             var screen = new GameObject("CenterScreen");
-            screen.transform.SetParent(m_SteeringWheel, false);
+            screen.transform.SetParent(m_SteeringWheel != null ? m_SteeringWheel : transform, false);
             var srt = screen.AddComponent<RectTransform>();
             srt.anchorMin = srt.anchorMax = new Vector2(0.5f, 0.5f);
             srt.sizeDelta = new Vector2(screenW, screenH);
-            srt.anchoredPosition = new Vector2(0f, 8f);
+            srt.anchoredPosition = m_SteeringWheel != null ? new Vector2(0f, 8f) : new Vector2(0f, 145f);
             var bg = screen.AddComponent<Image>();
             bg.color = C_Screen;
 
@@ -341,6 +390,7 @@ namespace KartGame.UI
 
         void UpdateWheel()
         {
+            if (m_SteeringWheel == null) return;
             float target = -Kart.Input.TurnInput * MaxSteerAngle;
             m_CurrentSteerAngle = Mathf.Lerp(m_CurrentSteerAngle, target, Time.deltaTime * SteerSpeed);
             m_SteeringWheel.localEulerAngles = new Vector3(0f, 0f, m_CurrentSteerAngle);
