@@ -40,9 +40,16 @@ namespace KartGame.UI
         [Tooltip("Verberg het 2D voorruit-frame in VR. Gebruik daar de echte cockpit-geometry voor.")]
         public bool HideWindshieldInVR = true;
 
+        [Tooltip("Gebruik in VR alleen de kleine display + shift leds op het fysieke stuur.")]
+        public bool CompactWheelDisplayInVR = true;
+
+        [Range(0.4f, 1f)]
+        public float CompactWheelDisplayScale = 0.7f;
+
         // Private UI refs
         private RectTransform m_SteeringWheel;
-        private UICircle      m_RpmArc;
+        private UICircle m_RpmArc;
+        private Image[] m_ShiftLights;
         private TextMeshProUGUI m_SpeedText;
         private TextMeshProUGUI m_GearText;
         private Image m_ThrottleLight;
@@ -129,8 +136,11 @@ namespace KartGame.UI
             if (ShowWindshield && (!WorldSpaceMode || !HideWindshieldInVR)) BuildWindshield();
 
             // ── Dashboard bodem balk ──────────────────────────────────────────
-            var dashBar = MakeRect("DashBar", transform, C_Dark,
-                new Vector2(0,0), new Vector2(1,0), new Vector2(0,0), new Vector2(0,260));
+            if (!UseCompactWheelDisplay())
+            {
+                MakeRect("DashBar", transform, C_Dark,
+                    new Vector2(0,0), new Vector2(1,0), new Vector2(0,0), new Vector2(0,260));
+            }
 
             // ── Stuurwiel (midden, net boven bodem) ───────────────────────────
             if (!WorldSpaceMode || !HideSteeringWheelInVR)
@@ -140,10 +150,11 @@ namespace KartGame.UI
             BuildCenterDisplay();
 
             // ── RPM boog (half cirkel boven stuur) ───────────────────────────
-            BuildRPMArc();
+            BuildShiftLights();
 
             // ── Indicator lichtjes ────────────────────────────────────────────
-            BuildLights();
+            if (!UseCompactWheelDisplay())
+                BuildLights();
         }
 
         // ─── Gebogen voorruit ─────────────────────────────────────────────────────
@@ -276,48 +287,52 @@ namespace KartGame.UI
 
         void BuildCenterDisplay()
         {
-            float screenW = 130f, screenH = 90f;
+            float scale = UseCompactWheelDisplay() ? CompactWheelDisplayScale : 1f;
+            float screenW = (WorldSpaceMode ? 170f : 130f) * scale;
+            float screenH = (WorldSpaceMode ? 105f : 90f) * scale;
 
             var screen = new GameObject("CenterScreen");
             screen.transform.SetParent(m_SteeringWheel != null ? m_SteeringWheel : transform, false);
             var srt = screen.AddComponent<RectTransform>();
             srt.anchorMin = srt.anchorMax = new Vector2(0.5f, 0.5f);
             srt.sizeDelta = new Vector2(screenW, screenH);
-            srt.anchoredPosition = m_SteeringWheel != null ? new Vector2(0f, 8f) : new Vector2(0f, 145f);
+            srt.anchoredPosition = m_SteeringWheel != null
+                ? new Vector2(0f, 8f * scale)
+                : new Vector2(0f, UseCompactWheelDisplay() ? 0f : WorldSpaceMode ? 265f : 145f);
             var bg = screen.AddComponent<Image>();
             bg.color = C_Screen;
 
             // Snelheid groot
             m_SpeedText = CreateTMP("Speed", screen.transform,
-                "0", 36f, C_Cyan, TextAlignmentOptions.Center);
+                "0", 36f * scale, C_Cyan, TextAlignmentOptions.Center);
             var sprt = m_SpeedText.GetComponent<RectTransform>();
             sprt.anchorMin = sprt.anchorMax = new Vector2(0.5f, 0.5f);
-            sprt.sizeDelta = new Vector2(100f, 45f);
-            sprt.anchoredPosition = new Vector2(0f, 14f);
+            sprt.sizeDelta = new Vector2(100f * scale, 45f * scale);
+            sprt.anchoredPosition = new Vector2(0f, 14f * scale);
 
             // KM/H label
             var kmh = CreateTMP("KMH", screen.transform,
-                "KM/H", 9f, new Color(0.5f,0.6f,0.7f,1f), TextAlignmentOptions.Center);
+                "KM/H", 9f * scale, new Color(0.5f,0.6f,0.7f,1f), TextAlignmentOptions.Center);
             var krt = kmh.GetComponent<RectTransform>();
             krt.anchorMin = krt.anchorMax = new Vector2(0.5f, 0.5f);
-            krt.sizeDelta = new Vector2(80f, 16f);
-            krt.anchoredPosition = new Vector2(0f, -6f);
+            krt.sizeDelta = new Vector2(80f * scale, 16f * scale);
+            krt.anchoredPosition = new Vector2(0f, -6f * scale);
 
             // Versnelling
             m_GearText = CreateTMP("Gear", screen.transform,
-                "1", 22f, C_Orange, TextAlignmentOptions.Right);
+                "1", 22f * scale, C_Orange, TextAlignmentOptions.Right);
             var grt = m_GearText.GetComponent<RectTransform>();
             grt.anchorMin = grt.anchorMax = new Vector2(0.5f, 0.5f);
-            grt.sizeDelta = new Vector2(40f, 30f);
-            grt.anchoredPosition = new Vector2(52f, 22f);
+            grt.sizeDelta = new Vector2(40f * scale, 30f * scale);
+            grt.anchoredPosition = new Vector2(52f * scale, 22f * scale);
 
             // Scheidingslijn
             var line = new GameObject("Line");
             line.transform.SetParent(screen.transform, false);
             var lrt = line.AddComponent<RectTransform>();
             lrt.anchorMin = new Vector2(0.05f, 0f); lrt.anchorMax = new Vector2(0.95f, 0f);
-            lrt.anchoredPosition = new Vector2(0f, 22f);
-            lrt.sizeDelta = new Vector2(0f, 2f);
+            lrt.anchoredPosition = new Vector2(0f, 22f * scale);
+            lrt.sizeDelta = new Vector2(0f, 2f * scale);
             line.AddComponent<Image>().color = new Color(0.2f, 0.4f, 0.6f, 0.8f);
         }
 
@@ -356,6 +371,33 @@ namespace KartGame.UI
         }
 
         // ─── Indicator lichtjes ───────────────────────────────────────────────────
+
+        void BuildShiftLights()
+        {
+            float scale = UseCompactWheelDisplay() ? CompactWheelDisplayScale : 1f;
+            var row = new GameObject("ShiftLights");
+            row.transform.SetParent(m_SteeringWheel != null ? m_SteeringWheel : transform, false);
+            var rowRt = row.AddComponent<RectTransform>();
+            rowRt.anchorMin = rowRt.anchorMax = new Vector2(0.5f, 0.5f);
+            rowRt.sizeDelta = new Vector2(210f * scale, 30f * scale);
+            rowRt.anchoredPosition = m_SteeringWheel != null
+                ? new Vector2(0f, 64f * scale)
+                : new Vector2(0f, UseCompactWheelDisplay() ? 52f * scale : WorldSpaceMode ? 338f : 230f);
+
+            m_ShiftLights = new Image[6];
+            for (int i = 0; i < m_ShiftLights.Length; i++)
+            {
+                var light = new GameObject("ShiftLight" + (i + 1));
+                light.transform.SetParent(row.transform, false);
+                var rt = light.AddComponent<RectTransform>();
+                rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
+                rt.sizeDelta = new Vector2(26f * scale, 18f * scale);
+                rt.anchoredPosition = new Vector2((-87.5f + i * 35f) * scale, 0f);
+                var img = light.AddComponent<Image>();
+                img.color = DimShiftLight(GetShiftLightColor(i));
+                m_ShiftLights[i] = img;
+            }
+        }
 
         void BuildLights()
         {
@@ -410,17 +452,22 @@ namespace KartGame.UI
             int gear = Mathf.Clamp(Mathf.FloorToInt(speedKMH / 22f) + 1, 1, 6);
             m_GearText.text = gear.ToString();
 
-            // RPM boog vullen
-            if (m_RpmArc != null)
+            if (m_ShiftLights != null)
             {
-                m_RpmArc.FillAmount = t * 0.65f;
-                m_RpmArc.color      = Color.Lerp(C_Green, C_Red, t);
-                m_RpmArc.SetVerticesDirty();
+                int activeLights = Mathf.Clamp(Mathf.CeilToInt(t * m_ShiftLights.Length), 0, m_ShiftLights.Length);
+                for (int i = 0; i < m_ShiftLights.Length; i++)
+                {
+                    Color baseColor = GetShiftLightColor(i);
+                    m_ShiftLights[i].color = i < activeLights ? baseColor : DimShiftLight(baseColor);
+                }
             }
         }
 
         void UpdateLights()
         {
+            if (m_ThrottleLight == null || m_BrakeLight == null || m_DriftLight == null)
+                return;
+
             m_ThrottleLight.color = Kart.Input.Accelerate ? C_Green  : C_GreenDim;
             m_BrakeLight.color    = Kart.Input.Brake      ? C_Red    : C_RedDim;
             m_DriftLight.color    = Kart.WantsToDrift     ? C_Orange : C_OrangeDim;
@@ -429,6 +476,33 @@ namespace KartGame.UI
         // ══════════════════════════════════════════════════════════════════════════
         //  HELPERS
         // ══════════════════════════════════════════════════════════════════════════
+
+        static Color GetShiftLightColor(int index)
+        {
+            switch (index)
+            {
+                case 0:
+                case 1:
+                    return C_Green;
+                case 2:
+                case 3:
+                    return C_Orange;
+                case 4:
+                    return C_Red;
+                default:
+                    return new Color(0.35f, 0.1f, 1f, 1f);
+            }
+        }
+
+        static Color DimShiftLight(Color color)
+        {
+            return new Color(color.r * 0.18f, color.g * 0.18f, color.b * 0.18f, 1f);
+        }
+
+        bool UseCompactWheelDisplay()
+        {
+            return WorldSpaceMode && CompactWheelDisplayInVR;
+        }
 
         // Gewone rechthoek
         GameObject MakeRect(string name, Transform parent, Color color,

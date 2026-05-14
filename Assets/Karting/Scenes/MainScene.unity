@@ -2159,17 +2159,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 229a73c01bf095d40bee3c4b18b82472,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 100
+      value: 50.134613
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 229a73c01bf095d40bee3c4b18b82472,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 100
+      value: 50.134613
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 229a73c01bf095d40bee3c4b18b82472,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 100
+      value: 50.134613
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 229a73c01bf095d40bee3c4b18b82472,
         type: 3}
@@ -2179,12 +2179,12 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 229a73c01bf095d40bee3c4b18b82472,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.11
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 229a73c01bf095d40bee3c4b18b82472,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.028
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 229a73c01bf095d40bee3c4b18b82472,
         type: 3}
@@ -2221,11 +2221,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 229a73c01bf095d40bee3c4b18b82472,
+        type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -6537069937053548516, guid: 229a73c01bf095d40bee3c4b18b82472,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: da1ee2304001ab3438c324a975ef9d9d, type: 2}
+    - target: {fileID: -3603846734648359944, guid: 229a73c01bf095d40bee3c4b18b82472,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.0016
+      objectReference: {fileID: 0}
+    - target: {fileID: -3603846734648359944, guid: 229a73c01bf095d40bee3c4b18b82472,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.0004
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 229a73c01bf095d40bee3c4b18b82472,
         type: 3}
       propertyPath: m_Name
@@ -2236,6 +2251,10 @@ PrefabInstance:
     - {fileID: 65702495048144492, guid: 229a73c01bf095d40bee3c4b18b82472, type: 3}
     - {fileID: -8700617353114198275, guid: 229a73c01bf095d40bee3c4b18b82472, type: 3}
     m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 229a73c01bf095d40bee3c4b18b82472,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 362190446}
     - targetCorrespondingSourceObject: {fileID: -3603846734648359944, guid: 229a73c01bf095d40bee3c4b18b82472,
         type: 3}
       insertIndex: -1
@@ -4512,6 +4531,8 @@ MonoBehaviour:
   WorldSpaceMode: 1
   HideSteeringWheelInVR: 1
   HideWindshieldInVR: 1
+  CompactWheelDisplayInVR: 1
+  CompactWheelDisplayScale: 0.7
 --- !u!114 &362190443
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4583,15 +4604,15 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 362190441}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.64}
-  m_LocalScale: {x: 0.0045657163, y: 0.0045657163, z: 0.0045657163}
+  m_LocalPosition: {x: 0, y: 0, z: -0.00176}
+  m_LocalScale: {x: 0.00006593862, y: 0.00006593862, z: 0.00006593862}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 454324432}
+  m_Father: {fileID: 1835398020}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -0.14, y: -0.83}
+  m_AnchoredPosition: {x: 0.00019, y: -0.00103}
   m_SizeDelta: {x: 518.80005, y: 386}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &363564943
@@ -6036,7 +6057,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 362190446}
   - {fileID: 1864803757}
   - {fileID: 732766388}
   m_Father: {fileID: 2058083377}
@@ -8860,7 +8880,7 @@ Transform:
   m_GameObject: {fileID: 732766387}
   serializedVersion: 2
   m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
-  m_LocalPosition: {x: 0, y: -0.22, z: 0.55}
+  m_LocalPosition: {x: 0, y: -1.159, z: 6.559}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -14503,7 +14523,7 @@ Transform:
   m_GameObject: {fileID: 1329340835}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 15.98891, y: 0.8320009, z: 2.9985213}
+  m_LocalPosition: {x: 15.98891, y: 1.924, z: 2.228}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -14524,6 +14544,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   kartTarget: {fileID: 1304724376}
   cockpitOffset: {x: 0, y: 0.75, z: 0.25}
+  preserveSceneCockpitPlacement: 1
   positionSmoothing: 0.02
   rotationSmoothing: 0.02
   followKartYawOnly: 1
@@ -18488,7 +18509,7 @@ Transform:
   m_GameObject: {fileID: 1618870496}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.69, z: -1.14}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -22252,6 +22273,8 @@ MonoBehaviour:
   lockToKartFrame: 1
   rotationSmoothing: 0.04
   cockpitOffset: {x: 0, y: 0.75, z: 0.25}
+  preserveSceneCockpitPlacement: 1
+  viewpointHeightOffset: -0.08
   positionSmoothing: 0.04
   verticalBias: 0
   autoBuildVisibleCockpit: 0
@@ -22259,9 +22282,13 @@ MonoBehaviour:
   dashboardLocalEulerAngles: {x: 0, y: 0, z: 0}
   dashboardLocalScale: {x: 1, y: 1, z: 1}
   parentDashboardCanvasToDashboardBody: 1
+  parentDashboardCanvasToSteeringWheel: 1
+  wheelDashboardCanvasLocalPosition: {x: 0, y: 0, z: -0.01}
+  wheelDashboardCanvasLocalEulerAngles: {x: 0, y: 0, z: 0}
   autoBuildSteeringWheel: 1
   steeringWheelLocalPosition: {x: 0, y: -0.22, z: 0.55}
   steeringWheelLocalEulerAngles: {x: 68, y: 0, z: 0}
+  preserveSceneSteeringWheelPlacement: 1
   steeringWheelRadius: 0.26
   steeringWheelGripThickness: 0.035
   useAsQuestVirtualWheel: 1

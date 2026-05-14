@@ -58,6 +58,12 @@ public class F1CockpitRig : MonoBehaviour
     [Tooltip("Seat/cockpit position relative to the kart root.")]
     public Vector3 cockpitOffset = new Vector3(0f, 0.75f, 0.25f);
 
+    [Tooltip("Use the F1Cockpit transform as placed in the scene instead of forcing the cockpitOffset field.")]
+    public bool preserveSceneCockpitPlacement = true;
+
+    [Tooltip("Small extra height adjustment for the player viewpoint. Negative sits deeper in the kart.")]
+    public float viewpointHeightOffset = -0.08f;
+
     [Range(0.01f, 1f)]
     public float positionSmoothing = 0.04f;
 
@@ -83,6 +89,15 @@ public class F1CockpitRig : MonoBehaviour
     [Tooltip("Keep DashboardCanvas as a child of DashboardBody so it moves with the steering wheel.")]
     public bool parentDashboardCanvasToDashboardBody = true;
 
+    [Tooltip("Place DashboardCanvas on the imported steering wheel so display and LEDs rotate with the wheel.")]
+    public bool parentDashboardCanvasToSteeringWheel = true;
+
+    [Tooltip("Local canvas position on SteeringWheelMesh/Stuur.")]
+    public Vector3 wheelDashboardCanvasLocalPosition = new Vector3(0f, 0f, 0.05f);
+
+    [Tooltip("Local canvas rotation on SteeringWheelMesh/Stuur.")]
+    public Vector3 wheelDashboardCanvasLocalEulerAngles = Vector3.zero;
+
     [Tooltip("Build a visible 3D steering wheel when SteeringWheelMesh is empty.")]
     public bool autoBuildSteeringWheel = true;
 
@@ -91,6 +106,9 @@ public class F1CockpitRig : MonoBehaviour
 
     [Tooltip("Local wheel tilt on DashboardBody.")]
     public Vector3 steeringWheelLocalEulerAngles = new Vector3(68f, 0f, 0f);
+
+    [Tooltip("Use the steering wheel transform as placed in the scene instead of forcing the numeric fields below.")]
+    public bool preserveSceneSteeringWheelPlacement = true;
 
     [Range(0.12f, 0.45f)]
     public float steeringWheelRadius = 0.26f;
@@ -116,8 +134,8 @@ public class F1CockpitRig : MonoBehaviour
     public bool animateQuestButtonsOnWheel = true;
     public QuestControllerButton jumpVisualButton = QuestControllerButton.SecondaryButton;
     public int jumpVisualButtonNumber = 1;
-    public QuestControllerButton lockVisualButton = QuestControllerButton.None;
-    public int lockVisualButtonNumber = -1;
+    public QuestControllerButton lockVisualButton = QuestControllerButton.PrimaryButton;
+    public int lockVisualButtonNumber = 2;
 
     private InputDevice m_Controller;
     private Quaternion m_CurrentYaw;
@@ -125,6 +143,8 @@ public class F1CockpitRig : MonoBehaviour
 
     void Start()
     {
+        CaptureSceneCockpitPlacement();
+
         ResolveDashboardTransform();
         ResolveDashboardCanvasTransform();
         ApplyDashboardPlacement();
@@ -134,6 +154,8 @@ public class F1CockpitRig : MonoBehaviour
             Transform wheel = transform.Find("SteeringWheelMesh");
             if (wheel != null) steeringWheelVisual = wheel;
         }
+
+        CaptureSceneSteeringWheelPlacement();
 
         if (steeringWheelAnchor == null)
             steeringWheelAnchor = steeringWheelVisual;
@@ -239,9 +261,27 @@ public class F1CockpitRig : MonoBehaviour
         dashboardTransform.localRotation = Quaternion.Euler(dashboardLocalEulerAngles);
         dashboardTransform.localScale = dashboardLocalScale;
 
-        if (parentDashboardCanvasToDashboardBody &&
-            dashboardCanvasTransform != null &&
-            dashboardCanvasTransform.parent != dashboardTransform)
+        if (dashboardCanvasTransform == null)
+            return;
+
+        if (parentDashboardCanvasToSteeringWheel && steeringWheelVisual != null)
+        {
+            if (!dashboardCanvasTransform.IsChildOf(steeringWheelVisual))
+            {
+                dashboardCanvasTransform.SetParent(steeringWheelVisual, false);
+
+                Vector3 canvasPosition = wheelDashboardCanvasLocalPosition;
+                if (canvasPosition.z < 0.035f)
+                    canvasPosition.z = 0.05f;
+
+                dashboardCanvasTransform.localPosition = canvasPosition;
+                dashboardCanvasTransform.localRotation = Quaternion.Euler(wheelDashboardCanvasLocalEulerAngles);
+            }
+
+            return;
+        }
+
+        if (parentDashboardCanvasToDashboardBody && dashboardCanvasTransform.parent != dashboardTransform)
         {
             dashboardCanvasTransform.SetParent(dashboardTransform, true);
         }
@@ -268,6 +308,25 @@ public class F1CockpitRig : MonoBehaviour
             steeringWheelAnchor.localPosition = steeringWheelLocalPosition;
             steeringWheelAnchor.localRotation = Quaternion.Euler(steeringWheelLocalEulerAngles);
         }
+    }
+
+    void CaptureSceneSteeringWheelPlacement()
+    {
+        if (!preserveSceneSteeringWheelPlacement || steeringWheelVisual == null)
+            return;
+
+        steeringWheelLocalPosition = steeringWheelVisual.localPosition;
+        steeringWheelLocalEulerAngles = steeringWheelVisual.localEulerAngles;
+    }
+
+    void CaptureSceneCockpitPlacement()
+    {
+        if (!preserveSceneCockpitPlacement || kartTarget == null)
+            return;
+
+        cockpitOffset = kartTarget.InverseTransformPoint(transform.position);
+        viewpointHeightOffset = 0f;
+        verticalBias = 0f;
     }
 
     void BuildSteeringWheelIfNeeded()
@@ -347,6 +406,11 @@ public class F1CockpitRig : MonoBehaviour
         if (!animateQuestButtonsOnWheel || steeringWheelVisual == null)
             return;
 
+        jumpVisualButton = QuestControllerButton.SecondaryButton;
+        jumpVisualButtonNumber = 1;
+        lockVisualButton = QuestControllerButton.PrimaryButton;
+        lockVisualButtonNumber = 2;
+
         QuestWheelButtonVisuals visuals = GetComponent<QuestWheelButtonVisuals>();
         if (visuals == null)
             visuals = gameObject.AddComponent<QuestWheelButtonVisuals>();
@@ -359,29 +423,30 @@ public class F1CockpitRig : MonoBehaviour
         visuals.lockButton = lockVisualButton;
         visuals.lockButtonNumber = lockVisualButtonNumber;
 
-        ConfigureButtonOneAnimation();
+        ConfigureWheelButtonAnimation("Knop (1)", 1);
+        ConfigureWheelButtonAnimation("Knop (2)", 2);
     }
 
-    void ConfigureButtonOneAnimation()
+    void ConfigureWheelButtonAnimation(string buttonName, int buttonNumber)
     {
-        Transform buttonOne = FindChildByName(steeringWheelVisual, "Knop (1)");
-        if (buttonOne == null)
+        Transform buttonTransform = FindChildByName(steeringWheelVisual, buttonName);
+        if (buttonTransform == null)
             return;
 
         Type animationType = FindButtonAnimationType();
         if (animationType == null)
             return;
 
-        Component animation = buttonOne.GetComponent(animationType);
+        Component animation = buttonTransform.GetComponent(animationType);
         if (animation == null)
-            animation = buttonOne.gameObject.AddComponent(animationType);
+            animation = buttonTransform.gameObject.AddComponent(animationType);
 
-        Transform cylinder = FindChildByName(buttonOne, "Cylinder");
+        Transform cylinder = FindChildByName(buttonTransform, "Cylinder");
         Renderer renderer = cylinder != null
             ? cylinder.GetComponentInChildren<Renderer>(true)
-            : buttonOne.GetComponentInChildren<Renderer>(true);
+            : buttonTransform.GetComponentInChildren<Renderer>(true);
 
-        SetAnimationField(animation, "knopNummer", 1);
+        SetAnimationField(animation, "knopNummer", buttonNumber);
         SetAnimationField(animation, "knopTop", cylinder);
         SetAnimationField(animation, "knopRenderer", renderer);
         SetAnimationField(animation, "indrukKleur", Color.green);
@@ -471,8 +536,8 @@ public class F1CockpitRig : MonoBehaviour
         input.FollowControllerPosition = false;
         input.MatchControllerRotation = false;
         input.VirtualWheelAxis = QuestSteeringWheelInput.WheelAxis.LocalZ;
-        input.VirtualWheelLocalPosition = steeringWheelLocalPosition;
-        input.VirtualWheelLocalEulerAngles = steeringWheelLocalEulerAngles;
+        input.VirtualWheelLocalPosition = steeringWheelVisual.localPosition;
+        input.VirtualWheelLocalEulerAngles = steeringWheelVisual.localEulerAngles;
     }
 
     // ---------------------------------------------------------------------------
@@ -527,7 +592,7 @@ public class F1CockpitRig : MonoBehaviour
     Vector3 GetKartCockpitPosition()
     {
         if (kartTarget == null) return transform.position;
-        return kartTarget.TransformPoint(cockpitOffset) + Vector3.up * verticalBias;
+        return kartTarget.TransformPoint(cockpitOffset) + Vector3.up * (verticalBias + viewpointHeightOffset);
     }
 
     void HideOriginalKartRenderers()

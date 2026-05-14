@@ -10,6 +10,7 @@ public class XRCockpitRigFollow : MonoBehaviour
 
     [Header("Cockpit Position")]
     public Vector3 cockpitOffset = new Vector3(0f, 0.75f, 0.25f);
+    public bool preserveSceneCockpitPlacement = true;
 
     [Header("Follow Settings")]
     [Range(0.01f, 1f)]
@@ -102,6 +103,7 @@ public class XRCockpitRigFollow : MonoBehaviour
             return;
         }
 
+        CaptureSceneCockpitPlacement();
         currentRotation = GetTargetRotation();
         transform.position = kartTarget.TransformPoint(GetDynamicCockpitOffset());
         transform.rotation = currentRotation;
@@ -134,6 +136,14 @@ public class XRCockpitRigFollow : MonoBehaviour
         return cockpitOffset + GetSeatOffset();
     }
 
+    private void CaptureSceneCockpitPlacement()
+    {
+        if (!preserveSceneCockpitPlacement)
+            return;
+
+        cockpitOffset = kartTarget.InverseTransformPoint(transform.position);
+    }
+
     private Vector3 GetSeatOffset()
     {
         if (!moveSeatBackFromControllerReach)
@@ -160,7 +170,7 @@ public class XRCockpitRigFollow : MonoBehaviour
 
         Vector3 delta = currentControllerLocal - reachBaselineLocal;
         Vector3 targetSeatOffset = new Vector3(
-            Mathf.Clamp(delta.x * controllerSideSensitivity, -maxSeatSideOffset, maxSeatSideOffset),
+            Mathf.Clamp(-delta.x * controllerSideSensitivity, -maxSeatSideOffset, maxSeatSideOffset),
             Mathf.Clamp(-delta.y * controllerHeightSensitivity, -maxSeatVerticalOffset, maxSeatVerticalOffset),
             -Mathf.Clamp(delta.z * controllerReachSensitivity, -maxSeatForwardOffset, maxSeatBackOffset)
         );
