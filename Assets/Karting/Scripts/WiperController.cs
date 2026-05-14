@@ -3,11 +3,13 @@ using UnityEngine;
 public class WiperController : MonoBehaviour
 {
     public float sweepAngle = 90f;
-    public float speed = 0.1f; // Trager
+    public float speed = 0.3f;
 
     private float timer = 0f;
     private Quaternion startRot;
+    private bool wiperAan = false;
     private ESP32Manager esp32;
+    private bool vorigeWiperStatus = false;
 
     void Start()
     {
@@ -23,32 +25,32 @@ public class WiperController : MonoBehaviour
 
     void Update()
     {
-        // Lees schakelaar direct (geen toggle, gewoon aan/uit)
-        bool wiperAan = false;
+        // Rising edge detectie voor toggle
+        bool huidigeStatus = esp32 != null && esp32.wiperSchakelaar;
+        bool risingEdge = huidigeStatus && !vorigeWiperStatus;
 
-        if (esp32 != null)
-            wiperAan = esp32.wiperSchakelaar;
+        if (risingEdge || Input.GetKeyDown(KeyCode.V))
+        {
+            wiperAan = !wiperAan;
+            Debug.Log("Ruitenwisser: " + (wiperAan ? "AAN" : "UIT"));
+        }
 
-        // Keyboard backup
-        if (Input.GetKey(KeyCode.V))
-            wiperAan = true;
+        vorigeWiperStatus = huidigeStatus;
 
         if (wiperAan)
         {
-            timer += Time.deltaTime * speed ;
+            timer += Time.deltaTime * speed * 2f;
             float t = Mathf.PingPong(timer, 1f);
             float angle = -t * sweepAngle;
             transform.localRotation = startRot * Quaternion.Euler(0f, 0f, angle);
         }
         else
         {
-            // Rustig terugkeren naar startpositie
             transform.localRotation = Quaternion.Lerp(
                 transform.localRotation,
                 startRot,
                 Time.deltaTime * 2f
             );
-            // Reset timer zodat hij altijd vanaf begin start
             timer = 0f;
         }
     }
