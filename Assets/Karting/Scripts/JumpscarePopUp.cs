@@ -9,11 +9,9 @@ public class JumpscarePopUp : MonoBehaviour
     public float minTijd = 5f;
     public float maxTijd = 15f;
 
-    [Header("ESP32")]
-    public int switchPin = 12; // Pas aan naar jouw pin
-
     private bool popupActief = false;
     private bool vorigeSchakelaarStatus = false;
+    private ESP32Manager esp32;
 
     private string[] berichten = {
         "Hé waar ben je?? 😂",
@@ -27,19 +25,14 @@ public class JumpscarePopUp : MonoBehaviour
 
     void Start()
     {
+        esp32 = FindObjectOfType<ESP32Manager>();
         smsCanvas.SetActive(false);
         PlanVolgendePopup();
     }
 
     void Update()
     {
-        // Lees schakelaar via ESP32Manager
-        ESP32Manager esp32 = FindObjectOfType<ESP32Manager>();
-        if (esp32 == null) return;
-
-        bool huidigeStatus = esp32.schakelaarIngedrukt;
-
-        // Detecteer rising edge (van uit naar aan)
+        bool huidigeStatus = esp32 != null && esp32.smsKnopIngedrukt;
         bool risingEdge = huidigeStatus && !vorigeSchakelaarStatus;
 
         if (risingEdge && popupActief)
@@ -49,7 +42,6 @@ public class JumpscarePopUp : MonoBehaviour
 
         vorigeSchakelaarStatus = huidigeStatus;
 
-        // Keyboard backup voor testen
         if (Input.GetKeyDown(KeyCode.X) && popupActief)
         {
             VerbergPopup();

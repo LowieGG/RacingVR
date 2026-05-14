@@ -2,15 +2,28 @@ using UnityEngine;
 
 public class KartHonk : MonoBehaviour
 {
-    public AudioSource audioSource;   // Assign in Inspector
-    public AudioClip honkSound;       // Assign your honk clip
+    public AudioSource audioSource;
+    public AudioClip honkSound;
+
+    private ESP32Manager esp32;
+    private bool vorigeHonkStatus = false;
+
+    void Start()
+    {
+        esp32 = FindObjectOfType<ESP32Manager>();
+    }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.H))
+        bool huidigeStatus = esp32 != null && esp32.honkIngedrukt;
+        bool risingEdge = huidigeStatus && !vorigeHonkStatus;
+
+        if (risingEdge || Input.GetKeyDown(KeyCode.H))
         {
             Honk();
         }
+
+        vorigeHonkStatus = huidigeStatus;
     }
 
     void Honk()
@@ -18,6 +31,7 @@ public class KartHonk : MonoBehaviour
         if (audioSource != null && honkSound != null)
         {
             audioSource.PlayOneShot(honkSound);
+            Debug.Log("TOET TOET!");
         }
     }
 }
