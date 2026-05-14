@@ -112,8 +112,12 @@ public class XRCockpitRigFollow : MonoBehaviour
 
         CaptureSceneCockpitPlacement();
         currentRotation = GetTargetRotation();
-        transform.position = kartTarget.TransformPoint(GetDynamicCockpitOffset());
         transform.rotation = currentRotation;
+
+        if (!TryAlignRigToConfiguredWheelCenter())
+        {
+            transform.position = kartTarget.TransformPoint(GetDynamicCockpitOffset());
+        }
     }
 
     private void LateUpdate()
@@ -149,6 +153,27 @@ public class XRCockpitRigFollow : MonoBehaviour
             return;
 
         cockpitOffset = kartTarget.InverseTransformPoint(transform.position);
+    }
+
+    private bool TryAlignRigToConfiguredWheelCenter()
+    {
+        if (!useConfiguredSeatBaseline)
+            return false;
+
+        Transform head = GetHeadTransform();
+        if (head == null || !TryGetControllerWorldPosition(out Vector3 controllerPosition))
+            return false;
+
+        Vector3 wheelCenterPosition = GetWheelCenterWorldPosition(controllerPosition);
+        Vector3 desiredHeadPosition = wheelCenterPosition - GetTargetRotation() * configuredWheelCenterFromHeadLocal;
+        Vector3 rigCorrection = desiredHeadPosition - head.position;
+
+        transform.position += rigCorrection;
+        cockpitOffset = kartTarget.InverseTransformPoint(transform.position);
+        SetSeatBaseline(configuredWheelCenterFromHeadLocal);
+        velocity = Vector3.zero;
+
+        return true;
     }
 
     private Vector3 GetSeatOffset()

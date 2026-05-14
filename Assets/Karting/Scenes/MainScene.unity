@@ -14555,7 +14555,7 @@ MonoBehaviour:
   headTransform: {fileID: 662123706}
   resetSeatBaselineButton: -1
   useConfiguredSeatBaseline: 1
-  configuredWheelCenterFromHeadLocal: {x: 0, y: 0, z: 0}
+  configuredWheelCenterFromHeadLocal: {x: 0, y: -0.3, z: 0.45}
   buttonThreshold: 0.2
   controllerReachSensitivity: 1
   controllerHeightSensitivity: 0.35
