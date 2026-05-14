@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.XR;
@@ -113,10 +114,10 @@ public class F1CockpitRig : MonoBehaviour
     [Header("Wheel Button Visuals")]
     [Tooltip("Animate steering wheel buttons from Quest input without affecting kart physics.")]
     public bool animateQuestButtonsOnWheel = true;
-    public QuestControllerButton jumpVisualButton = QuestControllerButton.PrimaryButton;
-    public int jumpVisualButtonNumber = 6;
-    public QuestControllerButton lockVisualButton = QuestControllerButton.SecondaryButton;
-    public int lockVisualButtonNumber = 7;
+    public QuestControllerButton jumpVisualButton = QuestControllerButton.SecondaryButton;
+    public int jumpVisualButtonNumber = 1;
+    public QuestControllerButton lockVisualButton = QuestControllerButton.None;
+    public int lockVisualButtonNumber = -1;
 
     private InputDevice m_Controller;
     private Quaternion m_CurrentYaw;
@@ -357,6 +358,96 @@ public class F1CockpitRig : MonoBehaviour
         visuals.jumpButtonNumber = jumpVisualButtonNumber;
         visuals.lockButton = lockVisualButton;
         visuals.lockButtonNumber = lockVisualButtonNumber;
+
+        ConfigureButtonOneAnimation();
+    }
+
+    void ConfigureButtonOneAnimation()
+    {
+        Transform buttonOne = FindChildByName(steeringWheelVisual, "Knop (1)");
+        if (buttonOne == null)
+            return;
+
+        Type animationType = FindButtonAnimationType();
+        if (animationType == null)
+            return;
+
+        Component animation = buttonOne.GetComponent(animationType);
+        if (animation == null)
+            animation = buttonOne.gameObject.AddComponent(animationType);
+
+        Transform cylinder = FindChildByName(buttonOne, "Cylinder");
+        Renderer renderer = cylinder != null
+            ? cylinder.GetComponentInChildren<Renderer>(true)
+            : buttonOne.GetComponentInChildren<Renderer>(true);
+
+        SetAnimationField(animation, "knopNummer", 1);
+        SetAnimationField(animation, "knopTop", cylinder);
+        SetAnimationField(animation, "knopRenderer", renderer);
+        SetAnimationField(animation, "indrukKleur", Color.green);
+        SetAnimationField(animation, "wachttijd", 0.2f);
+        SetAnimationEnumField(animation, "bewegingsAs", "LocalZ");
+        float currentLocalZ = cylinder != null ? cylinder.localPosition.z : 0f;
+        SetAnimationField(animation, "ingedrukteLocalWaarde", currentLocalZ);
+        SetAnimationField(animation, "ingedrukteLocalZ", currentLocalZ);
+        SetAnimationField(animation, "activeerMetTrigger", false);
+
+        MethodInfo refreshMethod = animationType.GetMethod(
+            "VernieuwStartWaarden",
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
+        );
+        if (refreshMethod != null)
+            refreshMethod.Invoke(animation, null);
+    }
+
+    static Type FindButtonAnimationType()
+    {
+        Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        for (int i = 0; i < assemblies.Length; i++)
+        {
+            Type type = assemblies[i].GetType("ButtonAnimation");
+            if (type != null)
+                return type;
+        }
+
+        return null;
+    }
+
+    static void SetAnimationField(Component animation, string fieldName, object value)
+    {
+        FieldInfo field = animation.GetType().GetField(
+            fieldName,
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
+        );
+        if (field != null)
+            field.SetValue(animation, value);
+    }
+
+    static void SetAnimationEnumField(Component animation, string fieldName, string enumName)
+    {
+        FieldInfo field = animation.GetType().GetField(
+            fieldName,
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
+        );
+        if (field == null || !field.FieldType.IsEnum)
+            return;
+
+        field.SetValue(animation, Enum.Parse(field.FieldType, enumName));
+    }
+
+    static Transform FindChildByName(Transform root, string childName)
+    {
+        if (root == null || string.IsNullOrEmpty(childName))
+            return null;
+
+        Transform[] children = root.GetComponentsInChildren<Transform>(true);
+        for (int i = 0; i < children.Length; i++)
+        {
+            if (children[i].name == childName)
+                return children[i];
+        }
+
+        return null;
     }
 
     void AttachWheelToQuestInput()

@@ -35,10 +35,16 @@ public class ButtonAnimation : MonoBehaviour
 
     void Awake()
     {
+        VernieuwStartWaarden();
+    }
+
+    public void VernieuwStartWaarden()
+    {
         if (knopTop == null)
         {
             Transform cubeChild = transform.Find("Cube");
-            knopTop = cubeChild != null ? cubeChild : transform;
+            Transform cylinderChild = transform.Find("Cylinder");
+            knopTop = cylinderChild != null ? cylinderChild : cubeChild != null ? cubeChild : transform;
         }
 
         if (IsToggleObject())
