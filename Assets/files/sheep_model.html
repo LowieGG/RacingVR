@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Sheep Model</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #f0f0f0;
+        }
+        #canvas {
+            display: block;
+            width: 100%;
+            height: 100vh;
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #333;
+            font-family: Arial, sans-serif;
+            background: rgba(255,255,255,0.8);
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">
+        <h3>3D Sheep Model</h3>
+        <p>Drag to rotate | Scroll to zoom</p>
+    </div>
+
+    <script>
+        let scene, camera, renderer, sheep;
+
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xaaccee);
+
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 2, 5);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            document.body.appendChild(renderer.domElement);
+
+            // Lighting
+            const light = new THREE.DirectionalLight(0xffffff, 1);
+            light.position.set(5, 10, 7);
+            light.castShadow = true;
+            light.shadow.mapSize.width = 2048;
+            light.shadow.mapSize.height = 2048;
+            scene.add(light);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+
+            // Create sheep
+            sheep = createSheep();
+            scene.add(sheep);
+
+            // Ground plane
+            const groundGeo = new THREE.PlaneGeometry(20, 20);
+            const groundMat = new THREE.MeshLambertMaterial({ color: 0x90ee90 });
+            const ground = new THREE.Mesh(groundGeo, groundMat);
+            ground.rotation.x = -Math.PI / 2;
+            ground.position.y = -2;
+            ground.receiveShadow = true;
+            scene.add(ground);
+
+            // Mouse controls
+            let isDragging = false;
+            let previousMousePosition = { x: 0, y: 0 };
+
+            document.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const deltaX = e.clientX - previousMousePosition.x;
+                    const deltaY = e.clientY - previousMousePosition.y;
+
+                    sheep.rotation.y += deltaX * 0.01;
+                    sheep.rotation.x += deltaY * 0.01;
+                }
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+
+            // Scroll to zoom
+            document.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                camera.position.z += e.deltaY * 0.01;
+            }, { passive: false });
+
+            window.addEventListener('resize', onWindowResize);
+
+            animate();
+        }
+
+        function createSheep() {
+            const sheepGroup = new THREE.Group();
+
+            // Body - white wool sphere
+            const bodyGeo = new THREE.SphereGeometry(1, 32, 32);
+            const bodyMat = new THREE.MeshStandardMaterial({ 
+                color: 0xffffff, 
+                roughness: 0.8,
+                metalness: 0.1
+            });
+            const body = new THREE.Mesh(bodyGeo, bodyMat);
+            body.scale.set(1, 1.3, 1.2);
+            body.position.y = 0.5;
+            body.castShadow = true;
+            body.receiveShadow = true;
+            sheepGroup.add(body);
+
+            // Head - smaller sphere
+            const headGeo = new THREE.SphereGeometry(0.5, 32, 32);
+            const headMat = new THREE.MeshStandardMaterial({ 
+                color: 0xffd9a8,
+                roughness: 0.7
+            });
+            const head = new THREE.Mesh(headGeo, headMat);
+            head.position.set(0, 1.4, 1);
+            head.castShadow = true;
+            head.receiveShadow = true;
+            sheepGroup.add(head);
+
+            // Snout
+            const snoutGeo = new THREE.SphereGeometry(0.2, 16, 16);
+            const snout = new THREE.Mesh(snoutGeo, headMat);
+            snout.position.set(0, 1.2, 1.5);
+            snout.castShadow = true;
+            sheepGroup.add(snout);
+
+            // Eyes
+            const eyeGeo = new THREE.SphereGeometry(0.12, 16, 16);
+            const eyeMat = new THREE.MeshStandardMaterial({ color: 0x000000 });
+            
+            const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
+            leftEye.position.set(-0.2, 1.55, 1.3);
+            sheepGroup.add(leftEye);
+
+            const rightEye = new THREE.Mesh(eyeGeo, eyeMat);
+            rightEye.position.set(0.2, 1.55, 1.3);
+            sheepGroup.add(rightEye);
+
+            // Ears
+            const earGeo = new THREE.SphereGeometry(0.15, 16, 16);
+            const earMat = new THREE.MeshStandardMaterial({ color: 0xffb8a3 });
+
+            const leftEar = new THREE.Mesh(earGeo, earMat);
+            leftEar.position.set(-0.35, 1.7, 0.9);
+            leftEar.scale.set(0.7, 1.2, 0.6);
+            sheepGroup.add(leftEar);
+
+            const rightEar = new THREE.Mesh(earGeo, earMat);
+            rightEar.position.set(0.35, 1.7, 0.9);
+            rightEar.scale.set(0.7, 1.2, 0.6);
+            sheepGroup.add(rightEar);
+
+            // Legs - 4 cylinders
+            const legGeo = new THREE.CylinderGeometry(0.2, 0.2, 1, 16);
+            const legMat = new THREE.MeshStandardMaterial({ color: 0xffd9a8 });
+
+            const positions = [
+                { x: -0.35, z: 0.2 },
+                { x: 0.35, z: 0.2 },
+                { x: -0.35, z: -0.4 },
+                { x: 0.35, z: -0.4 }
+            ];
+
+            positions.forEach(pos => {
+                const leg = new THREE.Mesh(legGeo, legMat);
+                leg.position.set(pos.x, 0, pos.z);
+                leg.castShadow = true;
+                leg.receiveShadow = true;
+                sheepGroup.add(leg);
+            });
+
+            // Tail - small sphere at back
+            const tailGeo = new THREE.SphereGeometry(0.2, 16, 16);
+            const tail = new THREE.Mesh(tailGeo, bodyMat);
+            tail.position.set(0, 1, -1.2);
+            tail.castShadow = true;
+            sheepGroup.add(tail);
+
+            sheepGroup.castShadow = true;
+            return sheepGroup;
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Gentle animation
+            sheep.rotation.z = Math.sin(Date.now() * 0.0005) * 0.05;
+
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        init();
+    </script>
+</body>
+</html>

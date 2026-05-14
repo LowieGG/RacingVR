@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: b1248557a8498204a89e837b604ac336
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - audioSource: {instanceID: 0}
+  - honkSound: {fileID: 8300000, guid: d061178b45a756a4f98e31cb30f83e31, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

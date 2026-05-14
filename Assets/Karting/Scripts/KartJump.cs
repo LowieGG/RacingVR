@@ -24,18 +24,26 @@ namespace KartGame.KartSystems
         bool jumpWasPressed;
         float lastJumpRequestTime = -999f;
         float lastGroundedTime = -999f;
+        ESP32Manager esp32;
+        bool vorigeJumpStatus = false;
 
         void Start()
         {
             kart = GetComponent<ArcadeKart>();
+            esp32 = FindObjectOfType<ESP32Manager>();
         }
 
         void Update()
         {
-            if (Input.GetKeyDown(JumpKey) || GetQuestJumpDown())
+            bool esp32Jump = esp32 != null && esp32.jumpIngedrukt && !vorigeJumpStatus;
+
+            if (Input.GetKeyDown(JumpKey) || GetQuestJumpDown() || esp32Jump)
             {
                 lastJumpRequestTime = Time.time;
             }
+
+            if (esp32 != null)
+                vorigeJumpStatus = esp32.jumpIngedrukt;
         }
 
         void FixedUpdate()
@@ -50,6 +58,7 @@ namespace KartGame.KartSystems
                 lastJumpRequestTime = -999f;
                 lastGroundedTime = -999f;
                 kart.Rigidbody.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
+                Debug.Log("JUMP!");
             }
         }
 
