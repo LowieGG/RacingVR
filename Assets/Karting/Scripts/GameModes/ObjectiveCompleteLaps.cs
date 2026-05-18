@@ -36,42 +36,19 @@ public class ObjectiveCompleteLaps : Objective
 
     protected override void ReachCheckpoint(int remaining)
     {
-
         if (isCompleted)
             return;
 
         currentLap++;
 
-        int targetRemaining = lapsToComplete - currentLap;
-
-        // update the objective text according to how many enemies remain to kill
-        if (targetRemaining == 0)
-        {
-            CompleteObjective(string.Empty, GetUpdatedCounterAmount(),
-                "Objective complete: " + title);
-        }
-        else if (targetRemaining == 1)
-        {
-            string notificationText = notificationLapsRemainingThreshold >= targetRemaining
-                ? "One " + targetName + " left"
-                : string.Empty;
-            UpdateObjective(string.Empty, GetUpdatedCounterAmount(), notificationText);
-        }
-        else if (targetRemaining > 1)
-        {
-            // create a notification text if needed, if it stays empty, the notification will not be created
-            string notificationText = notificationLapsRemainingThreshold >= targetRemaining
-                ? targetRemaining + " " + targetName + "s to collect left"
-                : string.Empty;
-
-            UpdateObjective(string.Empty, GetUpdatedCounterAmount(), notificationText);
-        }
-
+        // Oneindig rijden: nooit CompleteObjective aanroepen.
+        // Toon gewoon het huidige lapnummer als info.
+        UpdateObjective(string.Empty, GetUpdatedCounterAmount(), string.Empty);
     }
-    
+
     public override string GetUpdatedCounterAmount()
     {
-        return currentLap + " / " + lapsToComplete;
+        return "Lap " + currentLap;
     }
   
    

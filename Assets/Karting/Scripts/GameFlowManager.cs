@@ -139,11 +139,12 @@ public class GameFlowManager : MonoBehaviour
         }
         else
         {
-            if (m_ObjectiveManager.AreAllObjectivesCompleted())
-                EndGame(true);
+            // Oneindig modus: nooit het spel beëindigen via objectives of tijdslimiet.
+            // if (m_ObjectiveManager.AreAllObjectivesCompleted())
+            //     EndGame(true);
 
-            if (m_TimeManager.IsFinite && m_TimeManager.IsOver)
-                EndGame(false);
+            // if (m_TimeManager.IsFinite && m_TimeManager.IsOver)
+            //     EndGame(false);
         }
     }
 
