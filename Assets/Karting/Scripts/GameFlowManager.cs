@@ -118,6 +118,8 @@ public class GameFlowManager : MonoBehaviour
 
         if (gameState != GameState.Play)
         {
+            if (endGameFadeCanvasGroup == null)
+                return;
             elapsedTimeBeforeEndScene += Time.deltaTime;
             if(elapsedTimeBeforeEndScene >= endSceneLoadDelay)
             {
@@ -164,6 +166,8 @@ public class GameFlowManager : MonoBehaviour
             m_SceneToLoad = winSceneName;
             m_TimeLoadEndGameScene = Time.time + endSceneLoadDelay + delayBeforeFadeToBlack;
 
+            GameManager.Instance.runTime = m_TimeManager.TotalTime - m_TimeManager.TimeRemaining;
+            
             // play a sound on win
             var audioSource = gameObject.AddComponent<AudioSource>();
             audioSource.clip = victorySound;
