@@ -7,6 +7,11 @@ public class ExplodingSheep : MonoBehaviour
     public float explosionForce = 500f;
     public float explosionRadius = 5f;
     
+    [Header("Audio Settings")]
+    public float explosionVolume = 2f;  // Louder than default
+    public float deepBassVolume = 1.2f; // Bass layer volume
+    public float deepBassPitch = 0.5f;  // Lower pitch for deep sound
+    
     private AudioSource _audioSource;
     private bool _isShattered = false;
 
@@ -32,10 +37,13 @@ public class ExplodingSheep : MonoBehaviour
         _isShattered = true;
 
         // 1. Sound Logic
-        // We use PlayClipAtPoint so the sound continues even after the sheep is destroyed
+        // Play main explosion sound (loud)
         if (_audioSource.clip != null)
         {
-            AudioSource.PlayClipAtPoint(_audioSource.clip, transform.position);
+            AudioSource.PlayClipAtPoint(_audioSource.clip, transform.position, explosionVolume);
+            
+            // Add deep bass layer for more impact
+            PlayDeepBassLayer();
         }
 
         // 2. Shatter Logic
@@ -69,5 +77,22 @@ public class ExplodingSheep : MonoBehaviour
 
         // 3. Destroy the main sheep container
         Destroy(gameObject);
+    }
+
+    void PlayDeepBassLayer()
+    {
+        // Create a temporary audio source for the deep bass layer
+        GameObject bassObject = new GameObject("ExplosionBass");
+        bassObject.transform.position = transform.position;
+        
+        AudioSource bassSource = bassObject.AddComponent<AudioSource>();
+        bassSource.clip = _audioSource.clip;
+        bassSource.pitch = deepBassPitch;        // Lower pitch = deeper sound
+        bassSource.volume = deepBassVolume;
+        bassSource.Play();
+        
+        // Destroy after the sound finishes playing
+        float soundDuration = _audioSource.clip.length / deepBassPitch;
+        Destroy(bassObject, soundDuration + 0.1f);
     }
 }

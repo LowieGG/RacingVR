@@ -10125,6 +10125,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 0224bd7ca172bf749abf7a6d831d2bae, type: 2}
+    - target: {fileID: 2386887635980218585, guid: ff06401c0fd6358439792cb6f7b797b1,
+        type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 1fb95c889384b1e46886efde3b448f15, type: 3}
     - target: {fileID: 2567171838209624617, guid: ff06401c0fd6358439792cb6f7b797b1,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -10220,6 +10225,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 0224bd7ca172bf749abf7a6d831d2bae, type: 2}
+    - target: {fileID: 5679350297179995326, guid: ff06401c0fd6358439792cb6f7b797b1,
+        type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 1fb95c889384b1e46886efde3b448f15, type: 3}
     - target: {fileID: 5778626638988281743, guid: ff06401c0fd6358439792cb6f7b797b1,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -10240,6 +10250,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 0224bd7ca172bf749abf7a6d831d2bae, type: 2}
+    - target: {fileID: 6740769836290318404, guid: ff06401c0fd6358439792cb6f7b797b1,
+        type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 1fb95c889384b1e46886efde3b448f15, type: 3}
     - target: {fileID: 7386153926690564530, guid: ff06401c0fd6358439792cb6f7b797b1,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -13020,6 +13035,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   smsCanvas: {fileID: 540945445}
   smsTekst: {fileID: 127296323}
+  contactNaam: {fileID: 0}
+  smsGeluid: {fileID: 0}
   minTijd: 5
   maxTijd: 15
 --- !u!4 &1041325254
