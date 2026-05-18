@@ -6308,7 +6308,7 @@ MonoBehaviour:
   carSeat: {fileID: 464924148}
   launchForce: 15
   returnSpeed: 5
-  ejectSound: {fileID: 0}
+  ejectSound: {fileID: 8300000, guid: e1027c01a1d452b4d82e28744a8d0961, type: 3}
 --- !u!82 &464924150
 AudioSource:
   m_ObjectHideFlags: 0
@@ -7190,6 +7190,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   comPoort: COM3
   baudRate: 9600
+  nitroSound: {fileID: 8300000, guid: e1027c01a1d452b4d82e28744a8d0961, type: 3}
+  smsSound: {fileID: 8300000, guid: e1027c01a1d452b4d82e28744a8d0961, type: 3}
+  ejectSound: {fileID: 8300000, guid: e1027c01a1d452b4d82e28744a8d0961, type: 3}
+  honkSound: {fileID: 8300000, guid: e1027c01a1d452b4d82e28744a8d0961, type: 3}
+  jumpSound: {fileID: 8300000, guid: e1027c01a1d452b4d82e28744a8d0961, type: 3}
+  lichtenSound: {fileID: 8300000, guid: e1027c01a1d452b4d82e28744a8d0961, type: 3}
+  wiperSound: {fileID: 8300000, guid: e1027c01a1d452b4d82e28744a8d0961, type: 3}
+  laserSound: {fileID: 8300000, guid: e1027c01a1d452b4d82e28744a8d0961, type: 3}
+  gasSound: {fileID: 8300000, guid: e1027c01a1d452b4d82e28744a8d0961, type: 3}
+  remSound: {fileID: 8300000, guid: e1027c01a1d452b4d82e28744a8d0961, type: 3}
   nitroIngedrukt: 0
   smsKnopIngedrukt: 0
   ejectIngedrukt: 0
@@ -8051,6 +8061,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6435499550973355434, guid: d5cf9c31208d745c1856acc71c9cb1ca,
+        type: 3}
+      propertyPath: totalTimeInSecs
+      value: 90
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -15977,6 +15992,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1910917321}
+    - targetCorrespondingSourceObject: {fileID: 4810912518991602691, guid: 19954de30401f73428254541a9ad156e,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1910917328}
   m_SourcePrefab: {fileID: 100100000, guid: 19954de30401f73428254541a9ad156e, type: 3}
 --- !u!4 &1304724376 stripped
 Transform:
@@ -23491,6 +23510,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 720d8e1df3826e4488728144de9fe728, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1910917328
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1910917296}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d590e2c6d52d96746a4e7fbe518c1662, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collisionSound: {fileID: 8300000, guid: adb35efc5ee0a4a448bf799b5d95d86a, type: 3}
+  minCollisionForce: 1
+  soundCooldown: 0.2
 --- !u!1001 &1916670572
 PrefabInstance:
   m_ObjectHideFlags: 0
