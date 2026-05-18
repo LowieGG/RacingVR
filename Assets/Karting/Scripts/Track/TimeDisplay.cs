@@ -109,11 +109,13 @@ namespace KartGame.Track
             bestLapText.SetText(DisplaySessionBestLapTime());
 
 
-            if (finishedLapTimes.Count == lapTimesText.Count)
-            {
-                lapsOver = true;
-                currentLapText.gameObject.SetActive(false);
-            }
+            // Oneindig modus: lapsOver nooit op true zetten,
+            // zodat de klok blijft lopen na het bereiken van lapsToComplete.
+            // if (finishedLapTimes.Count == lapTimesText.Count)
+            // {
+            //     lapsOver = true;
+            //     currentLapText.gameObject.SetActive(false);
+            // }
         }
 
         void Update()

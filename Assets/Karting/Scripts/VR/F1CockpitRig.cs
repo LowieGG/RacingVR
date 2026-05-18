@@ -423,6 +423,16 @@ public class F1CockpitRig : MonoBehaviour
         visuals.lockButton = lockVisualButton;
         visuals.lockButtonNumber = lockVisualButtonNumber;
 
+        // Nieuwe namen (hernoemd door gebruiker)
+        ConfigureWheelButtonAnimation("Nitro",  1);
+        ConfigureWheelButtonAnimation("Honk",   2);
+        ConfigureWheelButtonAnimation("Jump",   3);
+        ConfigureWheelButtonAnimation("Laser",  4);
+        ConfigureWheelButtonAnimation("Sms",    5);
+        ConfigureWheelButtonAnimation("Wiper",  6);
+        ConfigureWheelButtonAnimation("Light",  7);
+        ConfigureWheelButtonAnimation("Lock",   8);
+        // Oude namen als fallback (voor andere scenes)
         ConfigureWheelButtonAnimation("Knop (1)", 1);
         ConfigureWheelButtonAnimation("Knop (2)", 2);
     }
