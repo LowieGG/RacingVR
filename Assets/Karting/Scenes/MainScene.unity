@@ -5647,6 +5647,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Honker
       objectReference: {fileID: 0}
+    - target: {fileID: 2647083773178896338, guid: b30a8dbb5269276428cae51bced6957c,
+        type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 586219389528f354395205f19908b0c1, type: 3}
     - target: {fileID: 2933737455438315895, guid: b30a8dbb5269276428cae51bced6957c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -5700,7 +5705,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1308070306901030744, guid: b30a8dbb5269276428cae51bced6957c,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1399079871}
   m_SourcePrefab: {fileID: 100100000, guid: b30a8dbb5269276428cae51bced6957c, type: 3}
 --- !u!1001 &408555097
 PrefabInstance:
@@ -16814,6 +16823,26 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1399002330}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1399079868 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1308070306901030744, guid: b30a8dbb5269276428cae51bced6957c,
+    type: 3}
+  m_PrefabInstance: {fileID: 403619181}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1399079871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1399079868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1248557a8498204a89e837b604ac336, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioSource: {fileID: 0}
+  honkSound: {fileID: 8300000, guid: d061178b45a756a4f98e31cb30f83e31, type: 3}
 --- !u!1 &1399239995
 GameObject:
   m_ObjectHideFlags: 0
@@ -18877,6 +18906,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5495455909113900342, guid: a75e2ea821a46b743b385828aab80280,
+        type: 3}
+      propertyPath: comPoort
+      value: COM8
+      objectReference: {fileID: 0}
     - target: {fileID: 7728942750434668598, guid: a75e2ea821a46b743b385828aab80280,
         type: 3}
       propertyPath: m_Name
@@ -19770,6 +19804,68 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 92bb9994204d1d44cb6223c53e4f84f8, type: 3}
+--- !u!1 &1676825668
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1676825670}
+  - component: {fileID: 1676825669}
+  m_Layer: 0
+  m_Name: SteeringWheelBridge
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1676825669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1676825668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4688e3ed308f56b4ea1924b3bc0679d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  koppelingen:
+  - esp32VeldNaam: nitroIngedrukt
+    knopNummer: 1
+  - esp32VeldNaam: honkIngedrukt
+    knopNummer: 2
+  - esp32VeldNaam: jumpIngedrukt
+    knopNummer: 3
+  - esp32VeldNaam: laserIngedrukt
+    knopNummer: 4
+  - esp32VeldNaam: smsKnopIngedrukt
+    knopNummer: 5
+  - esp32VeldNaam: wiperSchakelaar
+    knopNummer: 6
+  - esp32VeldNaam: lichtenIngedrukt
+    knopNummer: 7
+  - esp32VeldNaam: ejectIngedrukt
+    knopNummer: 8
+  stuurSearchRoot: {fileID: 582361019}
+--- !u!4 &1676825670
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1676825668}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 65.425476, y: 198.02376, z: 1055.2817}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1687223860
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24745,3 +24841,4 @@ SceneRoots:
   - {fileID: 593729120}
   - {fileID: 357669702}
   - {fileID: 403619181}
+  - {fileID: 1676825670}

@@ -24,16 +24,17 @@ public class ESP32SteeringWheelVisuals : MonoBehaviour
     }
 
     [Header("Koppelingen: ESP32 veld → stuurknop nummer")]
+    [Tooltip("Nummers komen overeen met de volgorde in F1CockpitRig: 1=Nitro 2=Honk 3=Jump 4=Laser 5=Sms 6=Wiper 7=Light 8=Lock")]
     public List<KnopKoppeling> koppelingen = new List<KnopKoppeling>
     {
-        new KnopKoppeling { esp32VeldNaam = "nitroIngedrukt",   knopNummer = 1 },
-        new KnopKoppeling { esp32VeldNaam = "honkIngedrukt",    knopNummer = 2 },
-        new KnopKoppeling { esp32VeldNaam = "jumpIngedrukt",    knopNummer = 3 },
-        new KnopKoppeling { esp32VeldNaam = "ejectIngedrukt",   knopNummer = 4 },
-        new KnopKoppeling { esp32VeldNaam = "lichtenIngedrukt", knopNummer = 5 },
-        new KnopKoppeling { esp32VeldNaam = "laserIngedrukt",   knopNummer = 6 },
-        new KnopKoppeling { esp32VeldNaam = "smsKnopIngedrukt", knopNummer = 7 },
-        new KnopKoppeling { esp32VeldNaam = "remIngedrukt",     knopNummer = 8 },
+        new KnopKoppeling { esp32VeldNaam = "nitroIngedrukt",   knopNummer = 1 }, // Nitro
+        new KnopKoppeling { esp32VeldNaam = "honkIngedrukt",    knopNummer = 2 }, // Honk
+        new KnopKoppeling { esp32VeldNaam = "jumpIngedrukt",    knopNummer = 3 }, // Jump
+        new KnopKoppeling { esp32VeldNaam = "laserIngedrukt",   knopNummer = 4 }, // Laser
+        new KnopKoppeling { esp32VeldNaam = "smsKnopIngedrukt", knopNummer = 5 }, // Sms
+        new KnopKoppeling { esp32VeldNaam = "wiperSchakelaar",  knopNummer = 6 }, // Wiper
+        new KnopKoppeling { esp32VeldNaam = "lichtenIngedrukt", knopNummer = 7 }, // Light
+        new KnopKoppeling { esp32VeldNaam = "ejectIngedrukt",   knopNummer = 8 }, // Lock
     };
 
     [Header("Zoekroot voor de knop-animaties")]
