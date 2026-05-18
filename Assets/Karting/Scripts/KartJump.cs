@@ -40,6 +40,7 @@ namespace KartGame.KartSystems
             if (Input.GetKeyDown(JumpKey) || GetQuestJumpDown() || esp32Jump)
             {
                 lastJumpRequestTime = Time.time;
+                Debug.Log("Jump request registered: " + Time.time);
             }
 
             if (esp32 != null)
@@ -49,16 +50,19 @@ namespace KartGame.KartSystems
         void FixedUpdate()
         {
             if (IsGrounded())
-                lastGroundedTime = Time.time;
+            {
+                lastGroundedTime = Time.fixedTime; // fixedTime ipv Time.time!
+            }
 
-            bool jumpBuffered = Time.time - lastJumpRequestTime <= JumpBufferTime;
-            bool recentlyGrounded = Time.time - lastGroundedTime <= CoyoteTime;
+            bool jumpBuffered = Time.fixedTime - lastJumpRequestTime <= JumpBufferTime;
+            bool recentlyGrounded = Time.fixedTime - lastGroundedTime <= CoyoteTime;
+
             if (jumpBuffered && recentlyGrounded)
             {
                 lastJumpRequestTime = -999f;
                 lastGroundedTime = -999f;
                 kart.Rigidbody.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
-                Debug.Log("JUMP!");
+                Debug.Log("JUMP executed!");
             }
         }
 
@@ -77,7 +81,6 @@ namespace KartGame.KartSystems
 
         bool IsGrounded()
         {
-            // Ignore triggers and the kart's own colliders; cockpit visuals/buttons should not count as ground.
             Vector3 origin = transform.position + Vector3.up * GroundCheckStartOffset;
             RaycastHit[] hits = Physics.SphereCastAll(
                 origin,
@@ -87,22 +90,17 @@ namespace KartGame.KartSystems
                 ~0,
                 QueryTriggerInteraction.Ignore
             );
-
             for (int i = 0; i < hits.Length; i++)
             {
                 Collider hitCollider = hits[i].collider;
-                if (hitCollider == null)
-                    continue;
+                if (hitCollider == null) continue;
+                if (hitCollider.attachedRigidbody == kart.Rigidbody) continue;
+                if (hitCollider.transform.IsChildOf(transform)) continue;
 
-                if (hitCollider.attachedRigidbody == kart.Rigidbody)
-                    continue;
-
-                if (hitCollider.transform.IsChildOf(transform))
-                    continue;
-
+               
                 return true;
             }
-
+           
             return false;
         }
     }

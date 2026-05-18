@@ -12425,7 +12425,7 @@ MonoBehaviour:
   smsCanvas: {fileID: 540945445}
   smsTekst: {fileID: 127296323}
   contactNaam: {fileID: 0}
-  smsGeluid: {fileID: 8300000, guid: e423d61732fe91446b4683e7ee78dcf7, type: 3}
+  smsGeluid: {fileID: 8300000, guid: 36224857ac9cbd543ad02c1c96e22d8d, type: 3}
   minTijd: 5
   maxTijd: 15
 --- !u!4 &1041325254
