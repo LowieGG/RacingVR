@@ -1,22 +1,26 @@
 using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(AudioSource))]
 public class ChairEjection : MonoBehaviour
 {
     public Transform carSeat;
     public float launchForce = 15f;
     public float returnSpeed = 5f;
+    public AudioClip ejectSound; // Drag your sound here in the Inspector
 
     private Camera mainCam;
     private bool isEjected = false;
     private Vector3 velocity;
     private ESP32Manager esp32;
     private bool vorigeEjectStatus = false;
+    private AudioSource _audioSource;
 
     void Start()
     {
         mainCam = Camera.main;
         esp32 = FindObjectOfType<ESP32Manager>();
+        _audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -35,6 +39,13 @@ public class ChairEjection : MonoBehaviour
     IEnumerator Eject()
     {
         isEjected = true;
+
+        // Play the assigned clip
+        if (ejectSound != null)
+        {
+            _audioSource.PlayOneShot(ejectSound);
+        }
+
         mainCam.transform.SetParent(null);
         velocity = Vector3.up * launchForce;
 
