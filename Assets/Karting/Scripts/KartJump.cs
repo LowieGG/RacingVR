@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR;
 
 namespace KartGame.KartSystems
 {
@@ -9,11 +10,22 @@ namespace KartGame.KartSystems
     {
         public float JumpForce = 1500f;
         public float GroundCheckDistance = 1.3f;
+        public float GroundCheckRadius = 0.35f;
+        public float GroundCheckStartOffset = 0.25f;
+        public float JumpBufferTime = 0.2f;
+        public float CoyoteTime = 0.12f;
         public KeyCode JumpKey = KeyCode.Space;
+        public XRNode JumpControllerNode = XRNode.RightHand;
+        public QuestControllerButton JumpButton = QuestControllerButton.PrimaryButton;
+        [Range(0f, 1f)] public float ButtonThreshold = 0.2f;
 
-        private ArcadeKart kart;
-        private ESP32Manager esp32;
-        private bool vorigeJumpStatus = false;
+        ArcadeKart kart;
+        InputDevice jumpController;
+        bool jumpWasPressed;
+        float lastJumpRequestTime = -999f;
+        float lastGroundedTime = -999f;
+        ESP32Manager esp32;
+        bool vorigeJumpStatus = false;
 
         void Start()
         {
@@ -23,21 +35,75 @@ namespace KartGame.KartSystems
 
         void Update()
         {
-            bool huidigeStatus = esp32 != null && esp32.jumpIngedrukt;
-            bool risingEdge = huidigeStatus && !vorigeJumpStatus;
+            bool esp32Jump = esp32 != null && esp32.jumpIngedrukt && !vorigeJumpStatus;
 
-            if ((risingEdge || Input.GetKeyDown(JumpKey)) && IsGrounded())
+            if (Input.GetKeyDown(JumpKey) || GetQuestJumpDown() || esp32Jump)
             {
+                lastJumpRequestTime = Time.time;
+            }
+
+            if (esp32 != null)
+                vorigeJumpStatus = esp32.jumpIngedrukt;
+        }
+
+        void FixedUpdate()
+        {
+            if (IsGrounded())
+                lastGroundedTime = Time.time;
+
+            bool jumpBuffered = Time.time - lastJumpRequestTime <= JumpBufferTime;
+            bool recentlyGrounded = Time.time - lastGroundedTime <= CoyoteTime;
+            if (jumpBuffered && recentlyGrounded)
+            {
+                lastJumpRequestTime = -999f;
+                lastGroundedTime = -999f;
                 kart.Rigidbody.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
                 Debug.Log("JUMP!");
             }
+        }
 
-            vorigeJumpStatus = huidigeStatus;
+        bool GetQuestJumpDown()
+        {
+            if (!jumpController.isValid)
+            {
+                jumpController = InputDevices.GetDeviceAtXRNode(JumpControllerNode);
+            }
+
+            bool jumpPressed = QuestControllerButtonUtility.IsPressed(jumpController, JumpButton, ButtonThreshold);
+            bool jumpDown = jumpPressed && !jumpWasPressed;
+            jumpWasPressed = jumpPressed;
+            return jumpDown;
         }
 
         bool IsGrounded()
         {
-            return Physics.Raycast(transform.position, Vector3.down, GroundCheckDistance);
+            // Ignore triggers and the kart's own colliders; cockpit visuals/buttons should not count as ground.
+            Vector3 origin = transform.position + Vector3.up * GroundCheckStartOffset;
+            RaycastHit[] hits = Physics.SphereCastAll(
+                origin,
+                GroundCheckRadius,
+                Vector3.down,
+                GroundCheckDistance + GroundCheckStartOffset,
+                ~0,
+                QueryTriggerInteraction.Ignore
+            );
+
+            for (int i = 0; i < hits.Length; i++)
+            {
+                Collider hitCollider = hits[i].collider;
+                if (hitCollider == null)
+                    continue;
+
+                if (hitCollider.attachedRigidbody == kart.Rigidbody)
+                    continue;
+
+                if (hitCollider.transform.IsChildOf(transform))
+                    continue;
+
+                return true;
+            }
+
+            return false;
         }
     }
 }
