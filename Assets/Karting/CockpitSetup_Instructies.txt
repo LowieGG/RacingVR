@@ -1,4 +1,64 @@
 ===================================================
+QUEST 2 FYSIEK STUUR / CONTROLLER TRACKING
+===================================================
+Doel:
+  Gebruik een Quest controller als tracking puck in een 3D-geprint stuur.
+  De controller/handen hoeven niet zichtbaar te zijn; alleen je virtuele stuur
+  en de kart reageren op de controller.
+
+Setup op de speler-kart:
+1. Selecteer de speler-kart met het ArcadeKart component.
+2. Laat KeyboardInput staan.
+3. QuestSteeringWheelInput staat op de BaseKartClassic prefab.
+4. Controller Node: RightHand als je de rechter controller in het stuur klikt.
+5. Buttons standaard:
+   - Trigger = vooruit / gas
+   - Grip = rem / achteruit
+   - A = springen via KartJump
+   - B = stuur opnieuw rechtdoor kalibreren
+   - Rechter thumbstick indrukken = toeter, als Horn Audio Source is ingevuld
+6. Laat Use Legacy Input Axes op KeyboardInput UIT staan voor VR. Anders kan
+   de linker joystick via Unity's oude Horizontal axis alsnog sturen.
+7. Als Virtual Wheel leeg is, maakt QuestSteeringWheelInput zelf een simpel
+   stuur aan dat boven op de rechter controller komt.
+
+Kalibreren bij start:
+1. Zet de controller vast in het fysieke 3D-geprinte stuur.
+2. Hou het fysieke stuur precies rechtdoor, alsof de voorwielen recht staan.
+3. Start de game. De eerste tracking-rotatie wordt automatisch nul graden.
+4. Als het stuur scheef staat: hou het stuur opnieuw recht en druk B.
+
+Als links/rechts omgekeerd is:
+  Invert Steering staat standaard AAN voor de rechter controller in het
+  3D-geprinte stuur. Zet dit uit als links/rechts toch omgekeerd voelt.
+
+Als de stuurhoek niet klopt:
+  Probeer Steering Axis LocalZ, LocalX of LocalY. De juiste as is de lokale as
+  van de controller die door de as van het fysieke stuur wijst.
+
+Virtueel stuurmodel laten meedraaien:
+  Sleep je stuur-mesh naar Virtual Wheel op QuestSteeringWheelInput.
+  Als het visueel omgekeerd draait, zet Invert Virtual Wheel aan.
+  Standaard maakt QuestSteeringWheelInput zelf een simpel stuur aan op een vaste
+  positie in de kart-cockpit: local position (0, 0.45, 0.75). De controller
+  bepaalt dan alleen de rotatie/input.
+  Wil je later dat het virtuele stuur letterlijk de controllerpositie volgt,
+  zet Follow Controller Position aan en kalibreer terwijl het stuur recht staat.
+
+Controller/handen verbergen:
+  Zet de mesh/model GameObjects van de XR controller prefabs uit. De controller
+  blijft dan wel tracken, maar wordt niet meer getekend in de scene.
+
+XR UI zichtbaar maken:
+  Unity Game View toont Screen Space Overlay canvassen wel, maar een XR headset
+  toont die vaak niet. XRCanvasConfigurator maakt bij Play automatisch een
+  runtime object aan en zet zulke canvassen om naar World Space HUD canvassen
+  als child van de XR/Main Camera. Zo komen Menu, Play Again, lap time en
+  dashboard voor je brilbeeld te staan.
+  In Win/Lose/Menu kan rechter trigger of A de zichtbare knop activeren, bv.
+  Play Again, zonder dat je met een muis hoeft te klikken.
+
+===================================================
   COCKPIT / FIRST-PERSON DASHBOARD SETUP
   Instructies voor Unity Editor
 ===================================================

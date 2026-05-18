@@ -326,13 +326,22 @@ namespace KartGame.KartSystems
             // reset input
             Input = new InputData();
             WantsToDrift = false;
+            m_Inputs = GetComponents<IInput>();
 
             // gather nonzero input from our sources
             for (int i = 0; i < m_Inputs.Length; i++)
             {
-                Input = m_Inputs[i].GenerateInput();
-                WantsToDrift = Input.Brake && Vector3.Dot(Rigidbody.velocity, transform.forward) > 0.0f;
+                InputData input = m_Inputs[i].GenerateInput();
+
+                Input = new InputData
+                {
+                    Accelerate = Input.Accelerate || input.Accelerate,
+                    Brake = Input.Brake || input.Brake,
+                    TurnInput = Mathf.Abs(input.TurnInput) > k_NullInput ? input.TurnInput : Input.TurnInput
+                };
             }
+
+            WantsToDrift = Input.Brake && Vector3.Dot(Rigidbody.velocity, transform.forward) > 0.0f;
         }
 
         void TickPowerups()
