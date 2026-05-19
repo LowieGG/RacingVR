@@ -10,7 +10,10 @@ public class KartLaser : MonoBehaviour
 
     void Start()
     {
-        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
+
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 0f;
         esp32 = FindObjectOfType<ESP32Manager>();
