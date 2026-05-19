@@ -1258,6 +1258,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: HeadLightLeft (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2150830414869173584, guid: aa9b251ef275d9e42a037a652a5b84f1,
+        type: 3}
+      propertyPath: m_Intensity
+      value: 30000
+      objectReference: {fileID: 0}
     - target: {fileID: 6466385639886910778, guid: aa9b251ef275d9e42a037a652a5b84f1,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -10702,6 +10707,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   headlights: []
   toggleKey: 108
+--- !u!108 &882260171 stripped
+Light:
+  m_CorrespondingSourceObject: {fileID: 2150830414869173584, guid: aa9b251ef275d9e42a037a652a5b84f1,
+    type: 3}
+  m_PrefabInstance: {fileID: 124068227}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &891323378 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 40299501215355906, guid: 230dd9257fca2c249b555f6edd3c8e14,
@@ -22405,7 +22416,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   JumpForce: 2200
-  GroundCheckDistance: 2
+  GroundCheckDistance: 0.2
   GroundCheckRadius: 0.2
   GroundCheckStartOffset: 0.5
   JumpBufferTime: 0.3
@@ -22479,8 +22490,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98adb13a9e80acf4a9fcf508838c3617, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  headlights: []
-  toggleKey: 108
+  headlights:
+  - {fileID: 882260171}
+  - {fileID: 2006282544}
+  toggleKey: 102
 --- !u!114 &1910917316
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23082,6 +23095,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   headlights: []
   toggleKey: 108
+--- !u!108 &2006282544 stripped
+Light:
+  m_CorrespondingSourceObject: {fileID: 4899460139542027008, guid: 78859138b94723444b3984f8a26f5a21,
+    type: 3}
+  m_PrefabInstance: {fileID: 210356794}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2039196227
 PrefabInstance:
   m_ObjectHideFlags: 0
