@@ -17,14 +17,11 @@ public class JumpscarePopUp : MonoBehaviour
     private AudioSource audioSource;
 
     private string[] berichten = {
-        "Hé waar ben je schatje??",
+        "Hé waar ben je??",
         "BEL ME ASAP!!!",
-        "Heb je het al gehoord van Lowie? hij valt dus echt op trannies",
         "HGH WDJ",
-        "hé kechba, heb je mijn bericht gezien??",
         "ANTWOORD NU!!!!",
-        "Feestje vanavond, kom je schatje?",
-        "Waddup shawty?",
+        "Feestje vanavond, kom je?",
         "you up?"
     };
 
