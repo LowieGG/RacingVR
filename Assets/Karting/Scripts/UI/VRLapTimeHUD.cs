@@ -20,30 +20,16 @@ public class VRLapTimeHUD : MonoBehaviour
     [Tooltip("Hoogte van het HUD paneel in UI-eenheden")]
     public float panelHeight = 130f;
 
-    // Interne tijdsregistratie
-    private float currentLapStartTime = 0f;
-    private bool raceStarted = false;
-    private List<float> finishedLapTimes = new List<float>();
 
     // UI referenties
     private Text currentLapTimeText;
     private Text bestLapTimeText;
+    private TimeManager timeManager;
 
     // ---------------------------------------------------------------
-    void OnEnable()
-    {
-        TimeDisplay.OnUpdateLap += OnLapCompleted;
-        TimeDisplay.OnSetLaps += OnSetLaps;
-    }
-
-    void OnDisable()
-    {
-        TimeDisplay.OnUpdateLap -= OnLapCompleted;
-        TimeDisplay.OnSetLaps -= OnSetLaps;
-    }
-
     void Start()
     {
+        timeManager = FindObjectOfType<TimeManager>();
         CreateVRCanvas();
     }
 
@@ -159,57 +145,24 @@ public class VRLapTimeHUD : MonoBehaviour
     // ---------------------------------------------------------------
     // Events
     // ---------------------------------------------------------------
-    void OnSetLaps(int laps)
-    {
-        // Race wordt geïnitialiseerd, reset onze teller
-        currentLapStartTime = 0f;
-        raceStarted = false;
-        finishedLapTimes.Clear();
-        if (bestLapTimeText != null)  bestLapTimeText.text  = "Best:  --:--.--";
-        if (currentLapTimeText != null) currentLapTimeText.text = "Lap:  0:00.00";
-    }
-
-    void OnLapCompleted()
-    {
-        if (currentLapStartTime == 0f)
-        {
-            // Eerste crossing = startsein van de klok
-            currentLapStartTime = Time.time;
-            raceStarted = true;
-            return;
-        }
-
-        // Sla laptijd op
-        float lapTime = Time.time - currentLapStartTime;
-        finishedLapTimes.Add(lapTime);
-        currentLapStartTime = Time.time;
-
-        // Update beste laptijd
-        RefreshBestLap();
-    }
-
-    void RefreshBestLap()
-    {
-        if (finishedLapTimes.Count == 0 || bestLapTimeText == null) return;
-
-        float best = float.MaxValue;
-        foreach (float t in finishedLapTimes)
-            if (t < best) best = t;
-
-        bestLapTimeText.text = "Best:  " + FormatTime(best);
-    }
 
     // ---------------------------------------------------------------
     // Update: huidige laptijd in real-time tonen
     // ---------------------------------------------------------------
     void Update()
     {
-        if (!raceStarted || currentLapStartTime == 0f || currentLapTimeText == null) return;
+        if (timeManager == null) return;
 
-        float elapsed = Time.time - currentLapStartTime;
-        currentLapTimeText.text = "Lap:  " + FormatTime(elapsed);
+        float current = timeManager.CurrentLapTime;
+        float best = timeManager.BestLapTime;
+
+        currentLapTimeText.text = "Lap: " + FormatTime(current);
+
+        if (best <= 0f || best == float.MaxValue)
+            bestLapTimeText.text = "Best: --:--.--";
+        else
+            bestLapTimeText.text = "Best: " + FormatTime(best);
     }
-
     // ---------------------------------------------------------------
     // Tijdformat: M:SS.hh
     // ---------------------------------------------------------------
