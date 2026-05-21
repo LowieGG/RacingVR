@@ -18322,7 +18322,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flashKleur: {r: 1, g: 1, b: 1, a: 1}
-  flashDuur: 0.2
+  flashDuur: 0.5
   flashToets: 102
   flashGeluid: {fileID: 8300000, guid: 8f31512ec2ffc904a8bc944068e0c0f8, type: 3}
 --- !u!114 &1400402755
@@ -19851,6 +19851,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5495455909113900342, guid: a75e2ea821a46b743b385828aab80280,
+        type: 3}
+      propertyPath: baudRate
+      value: 115200
       objectReference: {fileID: 0}
     - target: {fileID: 5495455909113900342, guid: a75e2ea821a46b743b385828aab80280,
         type: 3}

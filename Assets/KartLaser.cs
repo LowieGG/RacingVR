@@ -38,7 +38,7 @@ public class KartLaser : MonoBehaviour
     {
         lastFireTime = Time.time;
         GameObject laser = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        laser.transform.position = transform.position + transform.up * 0.2f;
+        laser.transform.position = transform.position + transform.up * 0f;
         laser.transform.rotation = transform.rotation;
         laser.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
         Destroy(laser.GetComponent<Collider>());
@@ -68,5 +68,4 @@ public class KartLaser : MonoBehaviour
             }
             yield return null;
         }
-    }
-}
+    }}
