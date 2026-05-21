@@ -10,7 +10,11 @@ public class TimeManager : MonoBehaviour
     public float TimeRemaining { get; private set; }
     public bool IsOver { get; private set; }
 
+    public float CurrentLapTime { get; private set; }
+    public float BestLapTime { get; private set; }
+
     private bool raceStarted;
+    private bool firstLap = true;
 
     public static Action<float> OnAdjustTime;
     public static Action<int, bool, GameMode> OnSetTime;
@@ -19,6 +23,7 @@ public class TimeManager : MonoBehaviour
     {
         IsFinite = false;
         TimeRemaining = TotalTime;
+        BestLapTime = PlayerPrefs.GetFloat("BestLapTime", -1f);
     }
 
 
@@ -50,6 +55,7 @@ public class TimeManager : MonoBehaviour
     {
         if (!raceStarted) return;
         
+        CurrentLapTime += Time.deltaTime;
         if (IsFinite && !IsOver)
         {
             TimeRemaining -= Time.deltaTime;
@@ -61,9 +67,38 @@ public class TimeManager : MonoBehaviour
         }
     }
 
+    public void CompleteLap()
+    {
+        Debug.Log($"COMPLETE LAP | Current={CurrentLapTime} Best={BestLapTime}");
+
+        // veiligheid
+        if (CurrentLapTime <= 0.1f)
+        {
+            Debug.LogWarning("Lap ignored (too small)");
+            return;
+        }
+
+        // best lap check
+        if (BestLapTime < 0f || BestLapTime == 0f || CurrentLapTime < BestLapTime)
+        {
+            BestLapTime = CurrentLapTime;
+
+            PlayerPrefs.SetFloat("BestLapTime", BestLapTime);
+            PlayerPrefs.Save();
+
+            Debug.Log("NEW BEST LAP: " + BestLapTime);
+        }
+
+        // reset lap
+        CurrentLapTime = 0f;
+    }
+
     public void StartRace()
     {
-        raceStarted = true;
+         raceStarted = true;
+        CurrentLapTime = 0f;
+        
+        BestLapTime = 0f;
     }
 
     public void StopRace() {
