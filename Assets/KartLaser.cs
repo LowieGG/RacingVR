@@ -38,8 +38,10 @@ public class KartLaser : MonoBehaviour
     {
         lastFireTime = Time.time;
         GameObject laser = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        laser.transform.position = transform.position;
+        laser.transform.position = transform.position + transform.up * 0.2f;
+        laser.transform.rotation = transform.rotation;
         laser.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+        Destroy(laser.GetComponent<Collider>());
         Material mat = laser.GetComponent<Renderer>().material;
         mat.color = Color.red;
         mat.EnableKeyword("_EMISSION");
@@ -52,7 +54,7 @@ public class KartLaser : MonoBehaviour
     {
         while (laser != null)
         {
-            laser.transform.position += transform.up * 40f * Time.deltaTime;
+            laser.transform.position += laser.transform.up * 40f * Time.deltaTime;
             Collider[] hits = Physics.OverlapSphere(laser.transform.position, 0.2f);
             foreach (Collider hit in hits)
             {
