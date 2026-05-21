@@ -61,7 +61,7 @@ public class ScreenFlash : MonoBehaviour
         flashImage.color = new Color(flashKleur.r, flashKleur.g, flashKleur.b, 1f);
 
         if (flashGeluid != null)
-            audioSource.PlayOneShot(flashGeluid);
+            audioSource.PlayOneShot(flashGeluid, 2f);
 
         Debug.Log("FLASH!");
     }

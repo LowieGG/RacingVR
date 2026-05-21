@@ -345,7 +345,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ControllerNode: 5
   SteeringAxis: 2
-  MaxWheelAngle: 45
+  MaxWheelAngle: 180
   SteeringSensitivity: 5
   SteeringDeadZone: 0.04
   InvertSteering: 1
