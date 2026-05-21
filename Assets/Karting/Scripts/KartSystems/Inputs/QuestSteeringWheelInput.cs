@@ -37,13 +37,19 @@ namespace KartGame.KartSystems
         public QuestControllerButton BrakeButton = QuestControllerButton.Grip;
         [Tooltip("B/Y by default: hold wheel straight and press to recalibrate.")]
         public QuestControllerButton RecalibrateButton = QuestControllerButton.SecondaryButton;
-        [Tooltip("Thumbstick click by default: honk.")]
-        public QuestControllerButton HornButton = QuestControllerButton.Primary2DAxisClick;
+        [Tooltip("A button by default: honk.")]
+        public QuestControllerButton HornButton = QuestControllerButton.PrimaryButton;
+        [Tooltip("Thumbstick click by default: toggle muziek aan/uit.")]
+        public QuestControllerButton MusicButton = QuestControllerButton.Primary2DAxisClick;
         [Range(0f, 1f)] public float ButtonThreshold = 0.2f;
 
         [Header("Horn")]
         public AudioSource HornAudioSource;
         public AudioClip HornClip;
+
+        [Header("Muziek")]
+        public AudioSource MusicAudioSource;
+        public AudioClip MusicClip;
 
         [Header("Virtual Wheel Visual")]
         [Tooltip("Optional visual steering wheel mesh in the cockpit. It rotates from its starting local rotation.")]
@@ -75,6 +81,7 @@ namespace KartGame.KartSystems
         bool m_HasCalibration;
         bool m_RecalibrateWasPressed;
         bool m_HornWasPressed;
+        bool m_MusicWasPressed;
         bool m_AutoCreatedWheel;
         float m_LastSteeringAngle;
 
@@ -112,6 +119,7 @@ namespace KartGame.KartSystems
             bool accelerate = ReadButton(AccelerateButton);
             bool brake = ReadButton(BrakeButton);
             UpdateHorn();
+            UpdateMusic();
 
             bool hasRotation = m_Controller.TryGetFeatureValue(CommonUsages.deviceRotation, out Quaternion rotation);
             if (!hasRotation)
@@ -230,6 +238,33 @@ namespace KartGame.KartSystems
             else
             {
                 HornAudioSource.Play();
+            }
+        }
+
+        void UpdateMusic()
+        {
+            bool musicPressed = ReadButton(MusicButton);
+            if (musicPressed && !m_MusicWasPressed)
+            {
+                ToggleMusic();
+            }
+            m_MusicWasPressed = musicPressed;
+        }
+
+        void ToggleMusic()
+        {
+            if (MusicAudioSource == null)
+                return;
+
+            if (MusicAudioSource.isPlaying)
+            {
+                MusicAudioSource.Stop();
+            }
+            else
+            {
+                if (MusicClip != null)
+                    MusicAudioSource.clip = MusicClip;
+                MusicAudioSource.Play();
             }
         }
 
