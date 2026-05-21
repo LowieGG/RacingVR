@@ -41,24 +41,23 @@ public class ChairEjection : MonoBehaviour
     }
 
     void Update()
+{
+    bool huidigeStatus = esp32 != null && esp32.ejectIngedrukt;
+    bool risingEdge = huidigeStatus && !vorigeEjectStatus;
+
+    if ((risingEdge || Input.GetKeyDown(KeyCode.E)) && !isEjected)
     {
-        bool huidigeStatus = esp32 != null && esp32.ejectIngedrukt;
-        bool risingEdge = huidigeStatus && !vorigeEjectStatus;
-
-        if ((risingEdge || Input.GetKeyDown(KeyCode.E)) && !isEjected)
-        {
-            StartCoroutine(Eject());
-        }
-
-        // Follow the car when not ejected
-        if (!isEjected && carSeat != null)
-        {
-            mainCam.transform.position = carSeat.position + carSeat.TransformDirection(positionOffsetFromCar);
-            mainCam.transform.rotation = carSeat.rotation * rotationOffsetFromCar;
-        }
-
-        vorigeEjectStatus = huidigeStatus;
+        StartCoroutine(Eject());
     }
+
+    vorigeEjectStatus = huidigeStatus;  // move this OUTSIDE the if block
+
+    if (!isEjected && carSeat != null)
+    {
+        mainCam.transform.position = carSeat.position + carSeat.TransformDirection(positionOffsetFromCar);
+        mainCam.transform.rotation = carSeat.rotation * rotationOffsetFromCar;
+    }
+}
 
     IEnumerator Eject()
     {

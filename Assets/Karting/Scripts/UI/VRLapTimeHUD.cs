@@ -3,56 +3,45 @@ using UnityEngine;
 using UnityEngine.UI;
 using KartGame.Track;
 
-/// <summary>
-/// Maakt een VR-vriendelijke lap time HUD aan als child van de Main Camera.
-/// Toont de huidige laptijd (wit, onder) en de beste laptijd (groen, boven).
-/// Volgt automatisch mee met het hoofd van de speler.
-/// </summary>
 public class VRLapTimeHUD : MonoBehaviour
 {
     [Header("Positie (relatief aan Main Camera)")]
-    [Tooltip("Lokale positie t.o.v. de Main Camera. X positief = rechts, Z = afstand voor je.")]
-    public Vector3 localPosition = new Vector3(0.22f, -0.13f, 0.75f);
+    public Vector3 localPosition = new Vector3(-0.6f, 0.35f, 0.75f);
 
     [Tooltip("Breedte van het HUD paneel in UI-eenheden")]
-    public float panelWidth = 320f;
+    public float panelWidth = 160f;
 
     [Tooltip("Hoogte van het HUD paneel in UI-eenheden")]
-    public float panelHeight = 130f;
+    public float panelHeight = 65f;
 
+    [Header("Grootte")]
+    public float canvasScale = 0.0005f;
 
-    // UI referenties
     private Text currentLapTimeText;
     private Text bestLapTimeText;
     private TimeManager timeManager;
 
-    // ---------------------------------------------------------------
     void Start()
     {
         timeManager = FindObjectOfType<TimeManager>();
         CreateVRCanvas();
     }
 
-    // ---------------------------------------------------------------
-    // Canvas aanmaken als child van Main Camera
-    // ---------------------------------------------------------------
     void CreateVRCanvas()
     {
         Camera mainCam = Camera.main;
         if (mainCam == null)
         {
-            Debug.LogError("[VRLapTimeHUD] Geen Main Camera gevonden! Zorg dat de camera de tag 'MainCamera' heeft.");
+            Debug.LogError("[VRLapTimeHUD] Geen Main Camera gevonden!");
             return;
         }
 
-        // --- Root canvas object ---
         GameObject canvasGO = new GameObject("VRLapTimeHUD_Canvas");
         canvasGO.layer = LayerMask.NameToLayer("UI");
         canvasGO.transform.SetParent(mainCam.transform, false);
         canvasGO.transform.localPosition = localPosition;
         canvasGO.transform.localRotation = Quaternion.identity;
-        // 1 unit in de canvas = 1 millimeter in de wereld (scale 0.001)
-        canvasGO.transform.localScale = Vector3.one * 0.001f;
+        canvasGO.transform.localScale = Vector3.one * canvasScale;
 
         Canvas canvas = canvasGO.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.WorldSpace;
@@ -66,7 +55,6 @@ public class VRLapTimeHUD : MonoBehaviour
 
         canvasGO.AddComponent<GraphicRaycaster>();
 
-        // --- Halftransparante achtergrond ---
         GameObject bg = new GameObject("Background");
         bg.layer = LayerMask.NameToLayer("UI");
         bg.transform.SetParent(canvasGO.transform, false);
@@ -75,36 +63,31 @@ public class VRLapTimeHUD : MonoBehaviour
         RectTransform bgRect = bg.GetComponent<RectTransform>();
         SetFullStretch(bgRect);
 
-        // --- Beste laptijd (groen, boven, gecentreerd) ---
         bestLapTimeText = CreateLabel(
             canvasGO.transform,
             "BestLapTime",
             "Best:  --:--.--",
             Color.green,
             36,
-            new Vector2(0f, 0.52f),   // anchorMin
-            new Vector2(1f, 1.0f),    // anchorMax
-            new Vector2(8f, 4f),      // offsetMin
-            new Vector2(-8f, -4f)     // offsetMax
+            new Vector2(0f, 0.52f),
+            new Vector2(1f, 1.0f),
+            new Vector2(8f, 4f),
+            new Vector2(-8f, -4f)
         );
 
-        // --- Huidige laptijd (wit, onder, gecentreerd) ---
         currentLapTimeText = CreateLabel(
             canvasGO.transform,
             "CurrentLapTime",
             "Lap:  0:00.00",
             Color.white,
             30,
-            new Vector2(0f, 0f),      // anchorMin
-            new Vector2(1f, 0.52f),   // anchorMax
-            new Vector2(8f, 4f),      // offsetMin
-            new Vector2(-8f, -4f)     // offsetMax
+            new Vector2(0f, 0f),
+            new Vector2(1f, 0.52f),
+            new Vector2(8f, 4f),
+            new Vector2(-8f, -4f)
         );
     }
 
-    // ---------------------------------------------------------------
-    // Hulpfunctie: maak een Text label aan
-    // ---------------------------------------------------------------
     Text CreateLabel(Transform parent, string name, string defaultText,
                      Color color, int fontSize,
                      Vector2 anchorMin, Vector2 anchorMax,
@@ -120,7 +103,6 @@ public class VRLapTimeHUD : MonoBehaviour
         t.fontSize = fontSize;
         t.fontStyle = FontStyle.Bold;
         t.alignment = TextAnchor.MiddleCenter;
-        // Gebruik de ingebouwde Unity font
         t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         if (t.font == null)
             t.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
@@ -142,16 +124,20 @@ public class VRLapTimeHUD : MonoBehaviour
         r.offsetMax = Vector2.zero;
     }
 
-    // ---------------------------------------------------------------
-    // Events
-    // ---------------------------------------------------------------
-
-    // ---------------------------------------------------------------
-    // Update: huidige laptijd in real-time tonen
-    // ---------------------------------------------------------------
     void Update()
     {
         if (timeManager == null) return;
+
+        Camera mainCam = Camera.main;
+        if (mainCam != null)
+        {
+            Transform canvasTransform = mainCam.transform.Find("VRLapTimeHUD_Canvas");
+            if (canvasTransform != null)
+            {
+                canvasTransform.localPosition = localPosition;
+                canvasTransform.localScale = Vector3.one * canvasScale;
+            }
+        }
 
         float current = timeManager.CurrentLapTime;
         float best = timeManager.BestLapTime;
@@ -163,13 +149,11 @@ public class VRLapTimeHUD : MonoBehaviour
         else
             bestLapTimeText.text = "Best: " + FormatTime(best);
     }
-    // ---------------------------------------------------------------
-    // Tijdformat: M:SS.hh
-    // ---------------------------------------------------------------
+
     string FormatTime(float time)
     {
-        int minutes  = (int)(time / 60f);
-        int seconds  = (int)(time % 60f);
+        int minutes = (int)(time / 60f);
+        int seconds = (int)(time % 60f);
         int hundredths = (int)((time * 100f) % 100f);
         return string.Format("{0}:{1:00}.{2:00}", minutes, seconds, hundredths);
     }
