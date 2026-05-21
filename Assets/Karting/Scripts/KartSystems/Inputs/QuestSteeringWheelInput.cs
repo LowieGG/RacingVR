@@ -20,7 +20,7 @@ namespace KartGame.KartSystems
         [Tooltip("Controller local axis that points through the physical wheel axle.")]
         public WheelAxis SteeringAxis = WheelAxis.LocalZ;
         [Tooltip("Maximum physical wheel angle that maps to full game steering.")]
-        public float MaxWheelAngle = 180f;
+        public float MaxWheelAngle = 90f;
         [Tooltip("Multiplies the measured wheel angle before sending it to the kart.")]
         [Range(0.25f, 5f)] public float SteeringSensitivity = 2f;
         [Tooltip("Small values around center are ignored.")]
