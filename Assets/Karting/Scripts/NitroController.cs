@@ -4,7 +4,7 @@ using KartGame.KartSystems;
 public class NitroController : MonoBehaviour
 {
     [Header("Nitro Instellingen")]
-    public float nitroTopSpeedBoost = 30f;
+    public float nitroTopSpeedBoost = 10f;
     public float nitroAccelerationBoost = 5f;
     public float nitroDuur = 3f;
 

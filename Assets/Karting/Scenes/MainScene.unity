@@ -24245,7 +24245,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad044b54793e7be4ba1df79968bdecaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nitroTopSpeedBoost: 30
+  nitroTopSpeedBoost: 10
   nitroAccelerationBoost: 5
   nitroDuur: 3
 --- !u!1001 &1931383003
