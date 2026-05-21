@@ -19,8 +19,17 @@
 // int stuurHoek = 0;
 // int vorigeCLK;
 
+// Non-blocking vibratie
+unsigned long vibraatStartTijd = 0;
+bool vibraatActief = false;
+const int VIBRATIE_DUUR = 200;
+
+// Timing
+unsigned long vorigeTijd = 0;
+const int INTERVAL = 50;
+
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200); // Sneller dan 9600!
   pinMode(KNOP_PIN, INPUT_PULLUP);
   pinMode(LED_PIN, OUTPUT);
   pinMode(SMS_PIN, INPUT_PULLUP);
@@ -33,77 +42,61 @@ void setup() {
   pinMode(LASER_PIN, INPUT_PULLUP);
   pinMode(GAS_PIN, INPUT_PULLUP);
   pinMode(REM_PIN, INPUT_PULLUP);
-
-  // Rotary encoder - later toevoegen
-  // pinMode(CLK_PIN, INPUT);
-  // pinMode(DT_PIN, INPUT);
-  // vorigeCLK = digitalRead(CLK_PIN);
 }
 
-void vibreer() {
+void startVibratie() {
   digitalWrite(VIBRATION_PIN, HIGH);
-  delay(200);
-  digitalWrite(VIBRATION_PIN, LOW);
+  vibraatStartTijd = millis();
+  vibraatActief = true;
 }
 
-// Rotary encoder - later toevoegen
-// void leesRotary() {
-//   int huidigeCLK = digitalRead(CLK_PIN);
-//   if (huidigeCLK != vorigeCLK) {
-//     if (digitalRead(DT_PIN) != huidigeCLK) {
-//       stuurHoek++;
-//     } else {
-//       stuurHoek--;
-//     }
-//     stuurHoek = constrain(stuurHoek, -100, 100);
-//   }
-//   vorigeCLK = huidigeCLK;
-// }
+void updateVibratie() {
+  if (vibraatActief && millis() - vibraatStartTijd >= VIBRATIE_DUUR) {
+    digitalWrite(VIBRATION_PIN, LOW);
+    vibraatActief = false;
+  }
+}
 
 void loop() {
+  // Lees commando's van Unity
   while (Serial.available() > 0) {
     String commando = Serial.readStringUntil('\n');
     commando.trim();
     if (commando == "VIBRATE") {
-      vibreer();
+      startVibratie();
     }
   }
 
-  // leesRotary(); // Rotary encoder - later toevoegen
+  // Update vibratie non-blocking
+  updateVibratie();
 
-  bool nitro = !digitalRead(KNOP_PIN);
-  bool sms = !digitalRead(SMS_PIN);
-  bool eject = !digitalRead(EJECT_PIN);
-  bool honk = !digitalRead(HONK_PIN);
-  bool jump = !digitalRead(JUMP_PIN);
-  bool licht = !digitalRead(LICHT_PIN);
-  bool wiper = !digitalRead(WIPER_PIN);
-  bool laser = !digitalRead(LASER_PIN);
-  bool gas = !digitalRead(GAS_PIN);
-  bool rem = !digitalRead(REM_PIN);
+  // Stuur data elke 50ms
+  unsigned long nu = millis();
+  if (nu - vorigeTijd >= INTERVAL) {
+    vorigeTijd = nu;
 
-  digitalWrite(LED_PIN, nitro);
+    bool nitro = !digitalRead(KNOP_PIN);
+    bool sms = !digitalRead(SMS_PIN);
+    bool eject = !digitalRead(EJECT_PIN);
+    bool honk = !digitalRead(HONK_PIN);
+    bool jump = !digitalRead(JUMP_PIN);
+    bool licht = !digitalRead(LICHT_PIN);
+    bool wiper = !digitalRead(WIPER_PIN);
+    bool laser = !digitalRead(LASER_PIN);
+    bool gas = !digitalRead(GAS_PIN);
+    bool rem = !digitalRead(REM_PIN);
 
-  Serial.print("NITRO:");
-  Serial.print(nitro);
-  Serial.print(",SMS:");
-  Serial.print(sms);
-  Serial.print(",EJECT:");
-  Serial.print(eject);
-  Serial.print(",HONK:");
-  Serial.print(honk);
-  Serial.print(",JUMP:");
-  Serial.print(jump);
-  Serial.print(",LICHT:");
-  Serial.print(licht);
-  Serial.print(",WIPER:");
-  Serial.print(wiper);
-  Serial.print(",LASER:");
-  Serial.print(laser);
-  Serial.print(",GAS:");
-  Serial.print(gas);
-  Serial.print(",REM:");
-  Serial.println(rem);
+    digitalWrite(LED_PIN, nitro);
 
-  delay(50);
+    Serial.print("NITRO:"); Serial.print(nitro);
+    Serial.print(",SMS:"); Serial.print(sms);
+    Serial.print(",EJECT:"); Serial.print(eject);
+    Serial.print(",HONK:"); Serial.print(honk);
+    Serial.print(",JUMP:"); Serial.print(jump);
+    Serial.print(",LICHT:"); Serial.print(licht);
+    Serial.print(",WIPER:"); Serial.print(wiper);
+    Serial.print(",LASER:"); Serial.print(laser);
+    Serial.print(",GAS:"); Serial.print(gas);
+    Serial.print(",REM:"); Serial.println(rem);
+  }
 }

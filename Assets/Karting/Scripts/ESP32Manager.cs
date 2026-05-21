@@ -6,7 +6,7 @@ public class ESP32Manager : MonoBehaviour
 {
     [Header("Instellingen")]
     public string comPoort = "COM3";
-    public int baudRate = 9600;
+    public int baudRate = 115200;
 
     [Header("Audio Instellingen")]
     public AudioClip nitroSound;
