@@ -204,8 +204,7 @@ public class F1CockpitRig : MonoBehaviour
         }
         else if (lockToKartFrame)
         {
-            m_CurrentYaw = GetKartYaw();
-            transform.rotation = m_CurrentYaw;
+            transform.rotation = kartTarget.rotation;
             transform.position = GetKartCockpitPosition();
 
             MoveWheelVisualToController();

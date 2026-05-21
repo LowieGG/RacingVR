@@ -16154,6 +16154,11 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 1.051
       objectReference: {fileID: 0}
+    - target: {fileID: 7798798854743944591, guid: 19954de30401f73428254541a9ad156e,
+        type: 3}
+      propertyPath: m_Bones.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 7798798856362184026, guid: 19954de30401f73428254541a9ad156e, type: 3}
@@ -20531,10 +20536,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14fc5f3fab659ab48b78b3df2c4db85e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  localPosition: {x: -0.5, y: 0.25, z: 0.75}
-  panelWidth: 160
-  panelHeight: 67
-  canvasScale: 0.0005
+  localPosition: {x: 0, y: 0.1, z: 0.75}
+  panelWidth: 250
+  panelHeight: 120
+  canvasScale: 0.0015
 --- !u!4 &1620343426
 Transform:
   m_ObjectHideFlags: 0

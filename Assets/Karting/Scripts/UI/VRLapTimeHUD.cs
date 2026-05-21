@@ -6,7 +6,7 @@ using KartGame.Track;
 public class VRLapTimeHUD : MonoBehaviour
 {
     [Header("Positie (relatief aan Main Camera)")]
-    public Vector3 localPosition = new Vector3(-0.6f, 0.35f, 0.75f);
+    public Vector3 localPosition = new Vector3(0f, 0.3f, 0.75f);
 
     [Tooltip("Breedte van het HUD paneel in UI-eenheden")]
     public float panelWidth = 160f;
@@ -59,9 +59,10 @@ public class VRLapTimeHUD : MonoBehaviour
         bg.layer = LayerMask.NameToLayer("UI");
         bg.transform.SetParent(canvasGO.transform, false);
         Image bgImg = bg.AddComponent<Image>();
-        bgImg.color = new Color(0f, 0f, 0f, 0.55f);
+        bgImg.color = new Color(0f, 0f, 0f, 0f);
         RectTransform bgRect = bg.GetComponent<RectTransform>();
         SetFullStretch(bgRect);
+        canvasRect.pivot = new Vector2(0.5f, 0.5f);
 
         bestLapTimeText = CreateLabel(
             canvasGO.transform,
@@ -81,8 +82,8 @@ public class VRLapTimeHUD : MonoBehaviour
             "Lap:  0:00.00",
             Color.white,
             30,
-            new Vector2(0f, 0f),
-            new Vector2(1f, 0.52f),
+            new Vector2(0f, 0.40f),
+            new Vector2(1f, 0.70f),
             new Vector2(8f, 4f),
             new Vector2(-8f, -4f)
         );
